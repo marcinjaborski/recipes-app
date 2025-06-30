@@ -10,10 +10,19 @@ const resource = {
       "/recipesForm": "Nowy przepis",
     },
   },
+  ProductForm: {
+    name: "Nazwa",
+    calories: "Kalorie: {{calories}}",
+  },
   Feedback: {
     error: "Coś poszło nie tak",
   },
   Shared: {
+    protein: "Białko",
+    fat: "Tłuszcze",
+    carbohydrates: "Węglowodany",
+    portion: "Porcja",
+    create: "Stwórz",
     confirm: "Potwierdź",
     cancel: "Anuluj",
     close: "Zamknij",
