@@ -1,5 +1,10 @@
 const routes = {
-  home: "/",
+  productList: "/productList",
+  productForm: "/productForm",
+  recipesList: "/recipesList",
+  recipesForm: "/recipesForm",
+  calendar: "/calendar",
+  dishForm: "/dishForm",
 } as const;
 
 type Route = (typeof routes)[keyof typeof routes];

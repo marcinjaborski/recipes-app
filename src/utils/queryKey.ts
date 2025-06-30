@@ -1,4 +1,3 @@
-const queryKey = {
-};
+const queryKey = {};
 
 export default queryKey;

@@ -2,7 +2,12 @@ const resource = {
   TopBar: {
     title: {
       default: "Przepisy",
-      "/": "Strona Główna",
+      "/productList": "Produkty",
+      "/productForm": "Nowy produkt",
+      "/calendar": "Tracker",
+      "/dishForm": "Dodaj posiłek",
+      "/recipesList": "Przepisy",
+      "/recipesForm": "Nowy przepis",
     },
   },
   Feedback: {

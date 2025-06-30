@@ -1,7 +1,9 @@
 import { BottomNavigation, BottomNavigationAction } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import routes from "../../../utils/routes";
-import DashboardIcon from "@mui/icons-material/Dashboard";
+import EggIcon from "@mui/icons-material/Egg";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 
 function Navigation() {
   const { pathname } = useLocation();
@@ -9,7 +11,9 @@ function Navigation() {
 
   return (
     <BottomNavigation value={pathname} onChange={(_, route) => navigate(route)}>
-      <BottomNavigationAction icon={<DashboardIcon />} value={routes.home} />
+      <BottomNavigationAction icon={<EggIcon />} value={routes.productList} />
+      <BottomNavigationAction icon={<CalendarTodayIcon />} value={routes.calendar} />
+      <BottomNavigationAction icon={<MenuBookIcon />} value={routes.recipesList} />
     </BottomNavigation>
   );
 }
