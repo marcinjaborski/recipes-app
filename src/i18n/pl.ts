@@ -10,6 +10,14 @@ const resource = {
       "/recipesForm": "Nowy przepis",
     },
   },
+  ProductList: {
+    name: "Nazwa",
+    calories: "kcal",
+    proteins: "B",
+    fats: "T",
+    carbohydrates: "W",
+    portion: "Porcja",
+  },
   ProductForm: {
     name: "Nazwa",
     calories: "Kalorie: {{calories}}",
