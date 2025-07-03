@@ -6,4 +6,6 @@ export type MappedProduct = Tables<"products"> & {
   calories: number;
 };
 
+export type MappedRecipe = Tables<"recipes">;
+
 export type SortDir = "asc" | "desc";
