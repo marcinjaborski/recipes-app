@@ -22,6 +22,7 @@ function App() {
           <Routes>
             <Route path={routes.productList} element={<ProductList />} />
             <Route path={routes.productForm} element={<ProductForm />} />
+            <Route path={routes.productFormUpdate} element={<ProductForm />} />
             <Route path={routes.recipesList} element={<RecipeList />} />
             <Route path={routes.recipesForm} element={<RecipeForm />} />
             <Route path={routes.calendar} element={<Calendar />} />

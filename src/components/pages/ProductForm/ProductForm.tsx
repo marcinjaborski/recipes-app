@@ -7,6 +7,9 @@ import { calculateCalories } from "@src/utils/functions.ts";
 import useUpsert from "@src/repository/useUpsert.ts";
 import routes from "@src/utils/routes.ts";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
+import { setProductToEdit } from "@src/store/GlobalSlice.ts";
+import { useEffect } from "react";
 
 export type ProductFormData = {
   name: string;
@@ -19,16 +22,31 @@ export type ProductFormData = {
 function ProductForm() {
   const { t } = useTranslation(["ProductForm", "Shared"]);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { productToEdit } = useAppSelector((state) => state.global);
   const { control, watch, handleSubmit } = useForm<ProductFormData>({
-    defaultValues: {
-      name: "",
-    },
+    defaultValues: productToEdit
+      ? {
+          name: productToEdit.name,
+          proteins: productToEdit.proteins,
+          fats: productToEdit.fats,
+          carbohydrates: productToEdit.carbohydrates,
+          portion: productToEdit.portion,
+        }
+      : {
+          name: "",
+        },
   });
-  const { mutate } = useUpsert("products", { onSuccess: () => navigate(routes.productList) });
+  const { mutate: upsertProduct } = useUpsert("products", { onSuccess: () => navigate(routes.productList) });
   const calories = calculateCalories(watch("proteins"), watch("fats"), watch("carbohydrates"));
   const onSubmit = (data: ProductFormData) => {
-    mutate(data);
+    upsertProduct(productToEdit ? { id: productToEdit.id, ...data } : data);
+    dispatch(setProductToEdit(null));
   };
+
+  useEffect(() => {
+    if (!productToEdit) navigate(routes.productForm);
+  }, [navigate, productToEdit]);
 
   return (
     <Stack component="form" spacing={2} sx={{ p: 3, height: "100%" }} onSubmit={handleSubmit(onSubmit)}>
@@ -66,7 +84,7 @@ function ProductForm() {
       </Stack>
 
       <Button type="submit" variant="contained" sx={{ alignSelf: "center" }}>
-        {t("Shared:create")}
+        {productToEdit ? t("Shared:edit") : t("Shared:create")}
       </Button>
     </Stack>
   );

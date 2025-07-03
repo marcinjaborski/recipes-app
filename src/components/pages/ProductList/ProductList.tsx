@@ -7,13 +7,21 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import { MappedProduct, SortDir } from "@src/utils/types.ts";
+import EditableRow from "@src/components/molecules/EditableRow";
+import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
+import { setProductToDeleteId, setProductToEdit } from "@src/store/GlobalSlice.ts";
+import ConfirmDialog from "@src/components/organisms/ConfirmDialog";
+import useDelete from "@src/repository/useDelete.ts";
 
 const COLUMNS = ["name", "calories", "proteins", "fats", "carbohydrates", "portion"] satisfies (keyof MappedProduct)[];
 
 function ProductList() {
   const { t } = useTranslation("ProductList");
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { productToDeleteId } = useAppSelector((state) => state.global);
   const { data } = useProducts();
+  const { mutate: deleteProduct } = useDelete("products");
   const [sortBy, setSortBy] = useState<keyof MappedProduct>("name");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
@@ -59,17 +67,29 @@ function ProductList() {
           </TableHead>
           <TableBody>
             {sortedProducts.map((product) => (
-              <TableRow key={product.id}>
-                {COLUMNS.map((columnName) => (
-                  <TableCell key={columnName} align={typeof product[columnName] === "number" ? "right" : "inherit"}>
-                    {product[columnName]}
-                  </TableCell>
-                ))}
-              </TableRow>
+              <EditableRow
+                key={product.id}
+                columns={COLUMNS}
+                data={product}
+                onEdit={() => {
+                  dispatch(setProductToEdit(product));
+                  navigate(routes.productFormUpdate);
+                }}
+                onDelete={() => dispatch(setProductToDeleteId(product.id))}
+              />
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <ConfirmDialog
+        title={t("confirmDelete")}
+        open={productToDeleteId !== null}
+        onCancel={() => dispatch(setProductToDeleteId(null))}
+        onConfirm={() => {
+          if (productToDeleteId) deleteProduct(productToDeleteId);
+          dispatch(setProductToDeleteId(null));
+        }}
+      />
       <BottomFab onClick={() => navigate(routes.productForm)}>
         <AddIcon />
       </BottomFab>
