@@ -23,6 +23,13 @@ const resource = {
   ProductForm: {
     name: "Nazwa",
     calories: "Kalorie: {{calories}}",
+    type: "Typ",
+    PROTEINS: "Białko",
+    CARBOHYDRATES: "Węglowodany",
+    DESSERT: "Dodatek",
+    FRUIT: "Owoc",
+    VEGETABLE: "Warzywo",
+    SPICE: "Przyprawa",
   },
   Feedback: {
     error: "Coś poszło nie tak",
