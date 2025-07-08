@@ -13,3 +13,5 @@ export const MEAL_TIME = {
   dinner: "dinner",
   snack: "snack",
 } as const;
+
+export const GRAMS = "g";

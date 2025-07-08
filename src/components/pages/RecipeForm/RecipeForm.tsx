@@ -1,14 +1,38 @@
-import { Box, Button, ListItemText, MenuItem, Stack } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Fab,
+  FormControlLabel,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  MenuItem,
+  Stack,
+  TextField,
+} from "@mui/material";
 import ControlledTextField from "@src/components/atoms/ControlledTextField";
 import { Enums } from "@src/utils/database.types.ts";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
 import { useForm } from "react-hook-form";
-import useUpsert from "@src/repository/useUpsert.ts";
 import routes from "@src/utils/routes.ts";
 import { setRecipeToEdit } from "@src/store/GlobalSlice.ts";
-import { MEAL_TIME } from "@src/utils/constants.ts";
+import { GRAMS, MEAL_TIME } from "@src/utils/constants.ts";
+import { useState } from "react";
+import { MappedProduct } from "@src/utils/types.ts";
+import useProducts from "@src/repository/useProducts.ts";
+import AddIcon from "@mui/icons-material/Add";
+import { NumericFormat } from "react-number-format";
+import useUpsertRecipe from "@src/repository/useUpsertRecipe.ts";
+import CloseIcon from "@mui/icons-material/Close";
 
 export type RecipeFormData = {
   name: string;
@@ -16,11 +40,19 @@ export type RecipeFormData = {
   recommendedMealTime: Enums<"mealTime">;
 };
 
+export type IngredientFormData = [MappedProduct, number, boolean];
+
 function RecipeForm() {
   const { t } = useTranslation(["RecipeForm", "Shared"]);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { data: products } = useProducts();
   const { recipeToEdit } = useAppSelector((state) => state.global);
+  const [ingredients, setIngredients] = useState<IngredientFormData[]>([]);
+  const [ingredientDialogOpen, setIngredientDialogOpen] = useState(false);
+  const [dialogIngredient, setDialogIngredient] = useState<string | undefined>("");
+  const [dialogPortion, setDialogPortion] = useState<number | undefined>(undefined);
+  const [dialogDefaultIncluded, setDialogDefaultIncluded] = useState(true);
   const { control, handleSubmit } = useForm<RecipeFormData>({
     defaultValues: recipeToEdit
       ? {
@@ -34,9 +66,10 @@ function RecipeForm() {
           recommendedMealTime: MEAL_TIME.breakfast,
         },
   });
-  const { mutate: upsertRecipe } = useUpsert("recipes", { onSuccess: () => navigate(routes.recipesList) });
-  const onSubmit = (data: RecipeFormData) => {
-    upsertRecipe(recipeToEdit ? { id: recipeToEdit.id, ...data } : data);
+  const { mutate: upsertRecipe } = useUpsertRecipe({ onSuccess: () => navigate(routes.recipesList) });
+
+  const onSubmit = async (data: RecipeFormData) => {
+    upsertRecipe([recipeToEdit ? { id: recipeToEdit.id, ...data } : data, ingredients]);
     dispatch(setRecipeToEdit(null));
   };
 
@@ -58,11 +91,104 @@ function RecipeForm() {
         ))}
       </ControlledTextField>
 
+      <Stack direction="row" spacing={2}>
+        <List sx={{ flex: 1 }}>
+          {ingredients.length === 0 ? (
+            <ListItem sx={{ fontStyle: "italic" }}>
+              <ListItemText primary={t("noIngredients")} secondary="&nbsp;" />
+            </ListItem>
+          ) : null}
+          {ingredients.map(([ingredient, portion, defaultIncluded], index) => (
+            <ListItem
+              key={ingredient.name}
+              secondaryAction={
+                <IconButton
+                  edge="end"
+                  onClick={() => {
+                    setIngredients((prevState) => {
+                      const copy = [...prevState];
+                      copy.splice(index, 1);
+                      return copy;
+                    });
+                  }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              }
+              sx={{ fontStyle: !defaultIncluded ? "italic" : null, color: !defaultIncluded ? "gray" : null }}
+            >
+              <ListItemText primary={ingredient.name} secondary={`${portion}${GRAMS}`} />
+            </ListItem>
+          ))}
+        </List>
+        <Box>
+          <Fab
+            onClick={() => {
+              setDialogIngredient("");
+              setDialogPortion(undefined);
+              setDialogDefaultIncluded(true);
+              setIngredientDialogOpen(true);
+            }}
+            size="small"
+            color="primary"
+            sx={{ mt: 3.5 }}
+          >
+            <AddIcon />
+          </Fab>
+        </Box>
+      </Stack>
+
       <Box sx={{ flex: 1 }} />
 
       <Button type="submit" variant="contained" sx={{ alignSelf: "center" }}>
         {recipeToEdit ? t("Shared:edit") : t("Shared:create")}
       </Button>
+
+      <Dialog open={ingredientDialogOpen} onClose={() => setIngredientDialogOpen(false)} fullWidth>
+        <DialogTitle>{t("ingredientDialogTitle")}</DialogTitle>
+        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Autocomplete
+            inputValue={dialogIngredient}
+            onInputChange={(_, newValue) => {
+              setDialogIngredient(newValue);
+              const ingredient = products.find((product) => product.name === newValue);
+              setDialogPortion(ingredient?.portion);
+            }}
+            renderInput={(params) => <TextField {...params} label={t("ingredient")} />}
+            options={products.map((product) => product.name)}
+            sx={{ mt: 1 }}
+          />
+          <NumericFormat
+            customInput={TextField}
+            fullWidth
+            value={dialogPortion}
+            suffix={GRAMS}
+            label={t("Shared:portion")}
+            onValueChange={({ floatValue }) => setDialogPortion(floatValue)}
+          />
+          <FormControlLabel
+            label={t("defaultIncluded")}
+            control={
+              <Checkbox
+                checked={dialogDefaultIncluded}
+                onChange={(event) => setDialogDefaultIncluded(event.target.checked)}
+              />
+            }
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              const ingredient = products.find((product) => product.name === dialogIngredient);
+              if (!ingredient || !dialogPortion) return;
+              setIngredients((prevState) => [...prevState, [ingredient, dialogPortion, dialogDefaultIncluded]]);
+              setIngredientDialogOpen(false);
+            }}
+          >
+            {t("Shared:add")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Stack>
   );
 }

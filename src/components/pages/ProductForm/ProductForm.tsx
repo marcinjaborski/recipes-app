@@ -4,13 +4,13 @@ import ControlledTextField from "@src/components/atoms/ControlledTextField";
 import { useTranslation } from "react-i18next";
 import ControlledNumberField from "@src/components/atoms/ControlledNumberField";
 import { calculateCalories } from "@src/utils/functions.ts";
-import useUpsert from "@src/repository/useUpsert.ts";
+import useUpsertProduct from "@src/repository/useUpsertProduct.ts";
 import routes from "@src/utils/routes.ts";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
 import { setProductToEdit } from "@src/store/GlobalSlice.ts";
 import { useEffect } from "react";
-import { PRODUCT_TYPE } from "@src/utils/constants.ts";
+import { GRAMS, PRODUCT_TYPE } from "@src/utils/constants.ts";
 
 export type ProductFormData = {
   name: string;
@@ -41,7 +41,7 @@ function ProductForm() {
           type: PRODUCT_TYPE.proteins,
         },
   });
-  const { mutate: upsertProduct } = useUpsert("products", { onSuccess: () => navigate(routes.productList) });
+  const { mutate: upsertProduct } = useUpsertProduct({ onSuccess: () => navigate(routes.productList) });
   const calories = calculateCalories(watch("proteins"), watch("fats"), watch("carbohydrates"));
   const onSubmit = (data: ProductFormData) => {
     upsertProduct(productToEdit ? { id: productToEdit.id, ...data } : data);
@@ -59,7 +59,7 @@ function ProductForm() {
         control={control}
         name="portion"
         label={t("Shared:portion")}
-        suffix="g"
+        suffix={GRAMS}
         rules={{ required: true }}
       />
       <Typography>{t("calories", { calories })}</Typography>
@@ -68,21 +68,21 @@ function ProductForm() {
           control={control}
           name="proteins"
           label={t("Shared:protein")}
-          suffix="g"
+          suffix={GRAMS}
           rules={{ required: true }}
         />
         <ControlledNumberField
           control={control}
           name="fats"
           label={t("Shared:fat")}
-          suffix="g"
+          suffix={GRAMS}
           rules={{ required: true }}
         />
         <ControlledNumberField
           control={control}
           name="carbohydrates"
           label={t("Shared:carbohydrates")}
-          suffix="g"
+          suffix={GRAMS}
           rules={{ required: true }}
         />
       </Stack>
