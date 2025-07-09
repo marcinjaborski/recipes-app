@@ -63,7 +63,12 @@ function ProductList() {
           dispatch(setProductToDeleteId(null));
         }}
       />
-      <BottomFab onClick={() => navigate(routes.productForm)}>
+      <BottomFab
+        onClick={() => {
+          dispatch(setProductToEdit(null));
+          navigate(routes.productForm);
+        }}
+      >
         <AddIcon />
       </BottomFab>
     </>

@@ -63,7 +63,12 @@ function RecipeList() {
           dispatch(setRecipeToDeleteId(null));
         }}
       />
-      <BottomFab onClick={() => navigate(routes.recipesForm)}>
+      <BottomFab
+        onClick={() => {
+          dispatch(setRecipeToEdit(null));
+          navigate(routes.recipesForm);
+        }}
+      >
         <AddIcon />
       </BottomFab>
     </>

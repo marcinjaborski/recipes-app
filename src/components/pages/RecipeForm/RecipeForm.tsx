@@ -50,7 +50,15 @@ function RecipeForm() {
   const dispatch = useAppDispatch();
   const { data: products } = useProducts();
   const { recipeToEdit } = useAppSelector((state) => state.global);
-  const [ingredients, setIngredients] = useState<IngredientFormData[]>([]);
+  const [ingredients, setIngredients] = useState<IngredientFormData[]>(
+    !recipeToEdit
+      ? []
+      : recipeToEdit.ingredients.map((ingredient) => [
+          ingredient.product,
+          ingredient.amount,
+          ingredient.defaultIncluded,
+        ]),
+  );
   const [ingredientDialogOpen, setIngredientDialogOpen] = useState(false);
   const [dialogIngredient, setDialogIngredient] = useState<string | undefined>("");
   const [dialogPortion, setDialogPortion] = useState<number | undefined>(undefined);

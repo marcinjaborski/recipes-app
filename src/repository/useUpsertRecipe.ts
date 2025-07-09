@@ -10,6 +10,7 @@ function useUpsertRecipe(options?: { onSuccess: () => void }) {
   return useMutation({
     mutationFn: async ([data, ingredients]: [TablesUpdate<"recipes">, IngredientFormData[]]) => {
       const response = await supabase.from("recipes").upsert(data).select().single().throwOnError();
+      await supabase.from("recipes_products").delete().eq("recipe_id", response.data.id);
       await supabase.from("recipes_products").insert(
         ingredients.map(([ingredient, portion, defaultIncluded]) => ({
           product_id: ingredient.id,
