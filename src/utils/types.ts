@@ -12,6 +12,10 @@ export type Ingredient = Omit<Tables<"recipes_products">, "product_id" | "recipe
 
 export type MappedRecipe = Tables<"recipes"> & {
   ingredients: Ingredient[];
+  calories: number;
+  proteins: number;
+  fats: number;
+  carbohydrates: number;
 };
 
 export type SortDir = "asc" | "desc";

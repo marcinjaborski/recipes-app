@@ -9,6 +9,7 @@ const resource = {
       "/dishForm": "Dodaj posiłek",
       "/recipesList": "Przepisy",
       "/recipesForm": "Nowy przepis",
+      "/recipesForm/update": "Edytuj przepis",
     },
   },
   ProductList: {
@@ -30,6 +31,14 @@ const resource = {
     fruit: "Owoc",
     vegetable: "Warzywo",
     spice: "Przyprawa",
+  },
+  RecipeList: {
+    name: "Nazwa",
+    calories: "kcal",
+    proteins: "B",
+    fats: "T",
+    carbohydrates: "W",
+    confirmDelete: "Czy na pewno usunąć ten przepis?",
   },
   RecipeForm: {
     name: "Nazwa",

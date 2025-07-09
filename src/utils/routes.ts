@@ -4,6 +4,7 @@ const routes = {
   productFormUpdate: "/productForm/update",
   recipesList: "/recipesList",
   recipesForm: "/recipesForm",
+  recipesFormUpdate: "/recipesForm/update",
   calendar: "/calendar",
   dishForm: "/dishForm",
 } as const;
