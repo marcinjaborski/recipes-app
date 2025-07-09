@@ -16,6 +16,7 @@ import {
   MenuItem,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import ControlledTextField from "@src/components/atoms/ControlledTextField";
 import { Enums } from "@src/utils/database.types.ts";
@@ -33,6 +34,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { NumericFormat } from "react-number-format";
 import useUpsertRecipe from "@src/repository/useUpsertRecipe.ts";
 import CloseIcon from "@mui/icons-material/Close";
+import { Grid } from "@mui/system";
 
 export type RecipeFormData = {
   name: string;
@@ -73,6 +75,12 @@ function RecipeForm() {
     dispatch(setRecipeToEdit(null));
   };
 
+  const calculateMacro = (field: "calories" | "proteins" | "fats" | "carbohydrates") =>
+    ingredients.reduce((sum, [ingredient, amount, defaultIncluded]) => {
+      if (!defaultIncluded) return sum;
+      return sum + ingredient[field] * (amount / ingredient.portion);
+    }, 0);
+
   return (
     <Stack component="form" spacing={2} sx={{ p: 3, height: "100%" }} onSubmit={handleSubmit(onSubmit)}>
       <ControlledTextField control={control} name="name" label={t("name")} rules={{ required: true }} />
@@ -90,6 +98,21 @@ function RecipeForm() {
           </MenuItem>
         ))}
       </ControlledTextField>
+
+      <Grid container spacing={2} sx={{ textAlign: "center" }}>
+        <Grid size={3}>
+          <Typography>{t("calories", { calories: calculateMacro("calories") })}</Typography>
+        </Grid>
+        <Grid size={3}>
+          <Typography>{t("proteins", { proteins: calculateMacro("proteins") })}</Typography>
+        </Grid>
+        <Grid size={3}>
+          <Typography>{t("fats", { fats: calculateMacro("fats") })}</Typography>
+        </Grid>
+        <Grid size={3}>
+          <Typography>{t("carbohydrates", { carbohydrates: calculateMacro("carbohydrates") })}</Typography>
+        </Grid>
+      </Grid>
 
       <Stack direction="row" spacing={2}>
         <List sx={{ flex: 1 }}>
