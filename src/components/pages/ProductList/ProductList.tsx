@@ -1,19 +1,19 @@
-import BottomFab from "@src/components/atoms/BottomFab";
 import AddIcon from "@mui/icons-material/Add";
-import { useNavigate } from "react-router-dom";
-import routes from "@src/utils/routes.ts";
-import useProducts from "@src/repository/useProducts.ts";
 import { Paper, Table, TableBody, TableContainer } from "@mui/material";
-import { useTranslation } from "react-i18next";
-import { MappedProduct } from "@src/utils/types.ts";
+import BottomFab from "@src/components/atoms/BottomFab";
 import EditableRow from "@src/components/molecules/EditableRow";
-import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
-import { setProductToDeleteId, setProductToEdit } from "@src/store/GlobalSlice.ts";
+import SortableHead from "@src/components/molecules/SortableHead";
 import ConfirmDialog from "@src/components/organisms/ConfirmDialog";
 import useDelete from "@src/repository/useDelete.ts";
+import useProducts from "@src/repository/useProducts.ts";
+import { setProductToDeleteId, setProductToEdit } from "@src/store/GlobalSlice.ts";
+import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
 import useSortedData from "@src/utils/hooks/useSortedData.ts";
-import SortableHead from "@src/components/molecules/SortableHead";
+import routes from "@src/utils/routes.ts";
+import { MappedProduct } from "@src/utils/types.ts";
 import { Dispatch, SetStateAction } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const COLUMNS = ["name", "calories", "proteins", "fats", "carbohydrates", "portion"] satisfies (keyof MappedProduct)[];
 

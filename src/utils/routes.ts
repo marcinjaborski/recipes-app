@@ -17,5 +17,5 @@ function isValidRoute(pathname: string): pathname is Route {
 }
 
 export default routes;
-export { routeNames, isValidRoute };
+export { isValidRoute,routeNames };
 export type { Route };

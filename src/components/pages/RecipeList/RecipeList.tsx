@@ -1,19 +1,19 @@
-import BottomFab from "@src/components/atoms/BottomFab";
 import AddIcon from "@mui/icons-material/Add";
-import { useNavigate } from "react-router-dom";
-import routes from "@src/utils/routes.ts";
-import useRecipes from "@src/repository/useRecipes.ts";
-import { MappedRecipe } from "@src/utils/types.ts";
-import { useTranslation } from "react-i18next";
-import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
-import useDelete from "@src/repository/useDelete.ts";
-import useSortedData from "@src/utils/hooks/useSortedData.ts";
 import { Paper, Table, TableBody, TableContainer } from "@mui/material";
+import BottomFab from "@src/components/atoms/BottomFab";
 import EditableRow from "@src/components/molecules/EditableRow";
-import { setRecipeToDeleteId, setRecipeToEdit } from "@src/store/GlobalSlice.ts";
-import ConfirmDialog from "@src/components/organisms/ConfirmDialog";
-import { Dispatch, SetStateAction } from "react";
 import SortableHead from "@src/components/molecules/SortableHead";
+import ConfirmDialog from "@src/components/organisms/ConfirmDialog";
+import useDelete from "@src/repository/useDelete.ts";
+import useRecipes from "@src/repository/useRecipes.ts";
+import { setRecipeToDeleteId, setRecipeToEdit } from "@src/store/GlobalSlice.ts";
+import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
+import useSortedData from "@src/utils/hooks/useSortedData.ts";
+import routes from "@src/utils/routes.ts";
+import { MappedRecipe } from "@src/utils/types.ts";
+import { Dispatch, SetStateAction } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const COLUMNS = ["name", "calories", "proteins", "fats", "carbohydrates"] satisfies (keyof MappedRecipe)[];
 

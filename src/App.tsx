@@ -1,16 +1,17 @@
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
-import { mainTheme } from "./utils/theme.ts";
+import Feedback from "@src/components/atoms/Feedback";
 import TopBar from "@src/components/organisms/TopBar";
+import Calendar from "@src/components/pages/Calendar";
+import DishForm from "@src/components/pages/DishForm";
+import ProductForm from "@src/components/pages/ProductForm";
+import ProductList from "@src/components/pages/ProductList";
+import RecipeForm from "@src/components/pages/RecipeForm";
+import RecipeList from "@src/components/pages/RecipeList";
 import { Route, Routes } from "react-router-dom";
+
 import Navigation from "./components/organisms/Navigation";
 import routes from "./utils/routes";
-import Feedback from "@src/components/atoms/Feedback";
-import ProductList from "@src/components/pages/ProductList";
-import RecipeList from "@src/components/pages/RecipeList";
-import Calendar from "@src/components/pages/Calendar";
-import ProductForm from "@src/components/pages/ProductForm";
-import RecipeForm from "@src/components/pages/RecipeForm";
-import DishForm from "@src/components/pages/DishForm";
+import { mainTheme } from "./utils/theme.ts";
 
 function App() {
   return (

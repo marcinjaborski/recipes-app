@@ -1,7 +1,7 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { mapRecipe } from "@src/repository/mappers.ts";
 import queryKey from "@src/utils/queryKey.ts";
 import supabase from "@src/utils/supabase.ts";
-import { mapRecipe } from "@src/repository/mappers.ts";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 function useRecipes() {
   return useSuspenseQuery({

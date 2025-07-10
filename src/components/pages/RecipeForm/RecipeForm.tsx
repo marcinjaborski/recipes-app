@@ -1,3 +1,5 @@
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Autocomplete,
   Box,
@@ -18,23 +20,21 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import ControlledTextField from "@src/components/atoms/ControlledTextField";
-import { Enums } from "@src/utils/database.types.ts";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
-import { useForm } from "react-hook-form";
-import routes from "@src/utils/routes.ts";
-import { setRecipeToEdit } from "@src/store/GlobalSlice.ts";
-import { GRAMS, MEAL_TIME } from "@src/utils/constants.ts";
-import { useState } from "react";
-import { MappedProduct } from "@src/utils/types.ts";
-import useProducts from "@src/repository/useProducts.ts";
-import AddIcon from "@mui/icons-material/Add";
-import { NumericFormat } from "react-number-format";
-import useUpsertRecipe from "@src/repository/useUpsertRecipe.ts";
-import CloseIcon from "@mui/icons-material/Close";
 import { Grid } from "@mui/system";
+import ControlledTextField from "@src/components/atoms/ControlledTextField";
+import useProducts from "@src/repository/useProducts.ts";
+import useUpsertRecipe from "@src/repository/useUpsertRecipe.ts";
+import { setRecipeToEdit } from "@src/store/GlobalSlice.ts";
+import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
+import { GRAMS, MEAL_TIME } from "@src/utils/constants.ts";
+import { Enums } from "@src/utils/database.types.ts";
+import routes from "@src/utils/routes.ts";
+import { MappedProduct } from "@src/utils/types.ts";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { NumericFormat } from "react-number-format";
+import { useNavigate } from "react-router-dom";
 
 export type RecipeFormData = {
   name: string;

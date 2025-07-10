@@ -1,9 +1,10 @@
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import EggIcon from "@mui/icons-material/Egg";
+import MenuBookIcon from "@mui/icons-material/MenuBook";
 import { BottomNavigation, BottomNavigationAction } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
+
 import routes from "../../../utils/routes";
-import EggIcon from "@mui/icons-material/Egg";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
 
 function Navigation() {
   const { pathname } = useLocation();

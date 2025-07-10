@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { TableType } from "@src/utils/types.ts";
-import supabase from "@src/utils/supabase.ts";
 import queryKey from "@src/utils/queryKey.ts";
+import supabase from "@src/utils/supabase.ts";
+import { TableType } from "@src/utils/types.ts";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 function useDelete(table: TableType) {
   const queryClient = useQueryClient();

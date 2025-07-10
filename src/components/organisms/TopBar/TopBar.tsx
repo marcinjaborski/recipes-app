@@ -1,7 +1,7 @@
 import { AppBar, Toolbar, Typography } from "@mui/material";
+import { isValidRoute } from "@src/utils/routes.ts";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
-import { isValidRoute } from "@src/utils/routes.ts";
 
 function TopBar() {
   const { t } = useTranslation("TopBar");

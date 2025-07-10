@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
-import { Controller, FieldValues } from "react-hook-form";
 import { ComponentProps } from "react";
+import { Controller, FieldValues } from "react-hook-form";
 
 type ControlledTextFieldProps<T extends FieldValues> = Omit<ComponentProps<typeof Controller<T>>, "render"> &
   ComponentProps<typeof TextField>;

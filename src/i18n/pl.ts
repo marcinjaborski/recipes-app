@@ -57,6 +57,14 @@ const resource = {
     ingredient: "Składnik",
     defaultIncluded: "Domyślnie w przepisie",
   },
+  Calendar: {
+    breakfast: "Śniadanie",
+    lunch: "Obiad",
+    dinner: "Kolacja",
+  },
+  DishForm: {
+    recipe: "Przepis",
+  },
   Feedback: {
     error: "Coś poszło nie tak",
   },

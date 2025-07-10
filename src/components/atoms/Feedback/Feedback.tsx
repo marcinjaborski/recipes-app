@@ -1,6 +1,6 @@
 import { Alert, Snackbar } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
 import { closeFeedback } from "@src/store/FeedbackSlice.ts";
+import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
 
 function Feedback() {
   const { message, type } = useAppSelector((state) => state.feedback);

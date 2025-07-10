@@ -1,16 +1,16 @@
 import { Box, Button, ListItemText, MenuItem, Stack, Typography } from "@mui/material";
-import { useForm } from "react-hook-form";
-import ControlledTextField from "@src/components/atoms/ControlledTextField";
-import { useTranslation } from "react-i18next";
 import ControlledNumberField from "@src/components/atoms/ControlledNumberField";
-import { calculateCalories } from "@src/utils/functions.ts";
+import ControlledTextField from "@src/components/atoms/ControlledTextField";
 import useUpsertProduct from "@src/repository/useUpsertProduct.ts";
-import routes from "@src/utils/routes.ts";
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
 import { setProductToEdit } from "@src/store/GlobalSlice.ts";
-import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
 import { GRAMS, PRODUCT_TYPE } from "@src/utils/constants.ts";
+import { calculateCalories } from "@src/utils/functions.ts";
+import routes from "@src/utils/routes.ts";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 export type ProductFormData = {
   name: string;

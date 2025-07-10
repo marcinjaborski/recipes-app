@@ -1,6 +1,6 @@
 import { Tables } from "@src/utils/database.types.ts";
-import { MappedProduct, MappedRecipe } from "@src/utils/types.ts";
 import { calculateCaloriesFromProduct } from "@src/utils/functions.ts";
+import { MappedProduct, MappedRecipe } from "@src/utils/types.ts";
 
 export const mapProduct = (product: Tables<"products">): MappedProduct => {
   return {

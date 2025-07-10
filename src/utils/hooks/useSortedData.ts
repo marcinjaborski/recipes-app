@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
 import { SortDir } from "@src/utils/types.ts";
+import { useMemo, useState } from "react";
 
 function useSortedData<T>(data: T[], initialSortBy: keyof T) {
   const [sortBy, setSortBy] = useState(initialSortBy);
