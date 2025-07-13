@@ -1,3 +1,7 @@
+export type DishFilters = {
+  date: string;
+};
+
 const queryKey = {
   products: {
     all: ["products"] as const,
@@ -6,7 +10,8 @@ const queryKey = {
     all: ["recipes"] as const,
   },
   dishes: {
-    all: ["products"] as const,
+    all: ["dishes"] as const,
+    list: (filters: DishFilters) => [...queryKey.dishes.all, { filters }],
   },
   recipes_products: {
     all: ["recipes_products"] as const,

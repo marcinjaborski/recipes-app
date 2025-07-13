@@ -63,6 +63,8 @@ const resource = {
     breakfast: "Śniadanie",
     lunch: "Obiad",
     dinner: "Kolacja",
+    snack: "Przekąski",
+    confirmDelete: "Czy na pewno usunąć to danie?",
   },
   DishForm: {
     recipe: "Przepis",

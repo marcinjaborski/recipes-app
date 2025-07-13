@@ -6,6 +6,7 @@ export type GlobalState = {
   productToDeleteId: number | null;
   recipeToEdit: MappedRecipe | null;
   recipeToDeleteId: number | null;
+  dishToDeleteId: number | null;
 };
 
 const initialState: GlobalState = {
@@ -13,6 +14,7 @@ const initialState: GlobalState = {
   productToDeleteId: null,
   recipeToEdit: null,
   recipeToDeleteId: null,
+  dishToDeleteId: null,
 };
 
 const globalSlice = createSlice({
@@ -31,8 +33,12 @@ const globalSlice = createSlice({
     setRecipeToDeleteId: (state, { payload }: PayloadAction<number | null>) => {
       state.recipeToDeleteId = payload;
     },
+    setDishToDeleteId: (state, { payload }: PayloadAction<number | null>) => {
+      state.dishToDeleteId = payload;
+    },
   },
 });
 
-export const { setProductToEdit, setProductToDeleteId, setRecipeToEdit, setRecipeToDeleteId } = globalSlice.actions;
+export const { setProductToEdit, setProductToDeleteId, setRecipeToEdit, setRecipeToDeleteId, setDishToDeleteId } =
+  globalSlice.actions;
 export const { reducer: globalReducer } = globalSlice;
