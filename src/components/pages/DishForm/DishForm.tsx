@@ -3,10 +3,6 @@ import {
   Box,
   Button,
   Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Fab,
   List,
   ListItem,
@@ -18,8 +14,8 @@ import {
 } from "@mui/material";
 import ControlledTextField from "@src/components/atoms/ControlledTextField";
 import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
+import ProductDialog from "@src/components/organisms/ProductDialog";
 import useInsertDish from "@src/repository/useInsertDish.ts";
-import useProducts from "@src/repository/useProducts.ts";
 import useRecipes from "@src/repository/useRecipes.ts";
 import { useAppSelector } from "@src/store/store.ts";
 import { GRAMS } from "@src/utils/constants.ts";
@@ -47,8 +43,6 @@ function DishForm() {
   const navigate = useNavigate();
   const { date, mealTime } = useAppSelector((state) => state.dish);
   const [addIngredientDialogOpen, setAddIngredientDialogOpen] = useState(false);
-  const [ingredientId, setIngredientId] = useState("");
-  const [ingredientAmount, setIngredientAmount] = useState<number | undefined>();
   const { control, watch, handleSubmit } = useForm<DishFormData>({
     defaultValues: {
       name: "",
@@ -60,7 +54,6 @@ function DishForm() {
     name: "ingredients",
   });
   const { data: recipes } = useRecipes();
-  const { data: products } = useProducts();
   const { mutate: insertDish } = useInsertDish({ onSuccess: () => navigate(routes.calendar) });
 
   const name = watch("name");
@@ -157,54 +150,12 @@ function DishForm() {
         {t("Shared:create")}
       </Button>
 
-      <Dialog open={addIngredientDialogOpen} onClose={() => setAddIngredientDialogOpen(false)} fullWidth>
-        <DialogTitle>{t("addIngredient")}</DialogTitle>
-        <DialogContent>
-          <Stack sx={{ gap: 2, mt: 1 }}>
-            <TextField
-              select
-              fullWidth
-              label={t("product")}
-              value={ingredientId}
-              onChange={(event) => {
-                setIngredientId(event.target.value);
-                const product = products.find((product) => product.id === Number(event.target.value));
-                if (product) setIngredientAmount(product.portion);
-              }}
-            >
-              {products
-                .filter((p) => !fields.find(({ product }) => product.id === p.id))
-                .map((product) => (
-                  <MenuItem key={product.id} value={product.id}>
-                    {product.name}
-                  </MenuItem>
-                ))}
-            </TextField>
-            <NumericFormat
-              customInput={TextField}
-              suffix={GRAMS}
-              fullWidth
-              label={t("amount")}
-              value={ingredientAmount}
-              onValueChange={({ floatValue }) => setIngredientAmount(floatValue)}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              const product = products.find((product) => product.id === Number(ingredientId));
-              if (!product || !ingredientAmount) return;
-              append({ product, amount: ingredientAmount, included: true });
-              setAddIngredientDialogOpen(false);
-              setIngredientId("");
-              setIngredientAmount(undefined);
-            }}
-          >
-            {t("Shared:add")}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ProductDialog
+        open={addIngredientDialogOpen}
+        setOpen={setAddIngredientDialogOpen}
+        onAdd={(product, amount) => append({ product, amount, included: true })}
+        filterProducts={(p) => !fields.find(({ product }) => product.id === p.id)}
+      />
     </Stack>
   );
 }

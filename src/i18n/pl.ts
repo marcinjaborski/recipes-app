@@ -68,7 +68,9 @@ const resource = {
   },
   DishForm: {
     recipe: "Przepis",
-    addIngredient: "Dodaj składnik",
+  },
+  ProductDialog: {
+    title: "Dodaj produkt",
     product: "Produkt",
     amount: "Ilość",
   },
