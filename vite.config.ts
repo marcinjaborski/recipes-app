@@ -18,7 +18,7 @@ export default defineConfig({
         name: "Recipes",
         short_name: "Recipes",
         description: "Application to organize recipes and track calories",
-        theme_color: "#f49ac2",
+        theme_color: "#41fbd0",
         icons: [
           {
             src: "icon-192.png",
