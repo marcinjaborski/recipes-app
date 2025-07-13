@@ -11,14 +11,18 @@ import {
   TextField,
 } from "@mui/material";
 import ControlledTextField from "@src/components/atoms/ControlledTextField";
+import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
+import useInsertDish from "@src/repository/useInsertDish.ts";
 import useRecipes from "@src/repository/useRecipes.ts";
+import { useAppSelector } from "@src/store/store.ts";
 import { GRAMS } from "@src/utils/constants.ts";
-import { Enums } from "@src/utils/database.types.ts";
+import routes from "@src/utils/routes.ts";
 import { MappedProduct } from "@src/utils/types.ts";
 import { useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { NumericFormat } from "react-number-format";
+import { useNavigate } from "react-router-dom";
 
 type IngredientData = {
   product: MappedProduct;
@@ -28,17 +32,13 @@ type IngredientData = {
 
 export type DishFormData = {
   name: string;
-  calories: number;
-  proteins: number;
-  fats: number;
-  carbohydrates: number;
-  date: string;
   ingredients: IngredientData[];
-  mealTime: Enums<"mealTime">;
 };
 
 function DishForm() {
   const { t } = useTranslation(["DishForm", "Shared"]);
+  const navigate = useNavigate();
+  const { date, mealTime } = useAppSelector((state) => state.dish);
   const { control, watch, handleSubmit } = useForm<DishFormData>({
     defaultValues: {
       name: "",
@@ -50,8 +50,16 @@ function DishForm() {
     name: "ingredients",
   });
   const { data: recipes } = useRecipes();
+  const { mutate: insertDish } = useInsertDish({ onSuccess: () => navigate(routes.calendar) });
 
   const name = watch("name");
+  const ingredients = watch("ingredients");
+
+  const calculateMacro = (field: "calories" | "proteins" | "fats" | "carbohydrates") =>
+    ingredients.reduce((sum, { product, amount, included }) => {
+      if (!included) return sum;
+      return sum + product[field] * (amount / product.portion);
+    }, 0);
 
   useEffect(() => {
     const baseRecipe = recipes.find((recipe) => recipe.name === name);
@@ -66,7 +74,15 @@ function DishForm() {
   }, [recipes, name, replace]);
 
   const onSubmit = (data: DishFormData) => {
-    console.log(data);
+    insertDish({
+      name: data.name,
+      calories: calculateMacro("calories"),
+      proteins: calculateMacro("proteins"),
+      fats: calculateMacro("fats"),
+      carbohydrates: calculateMacro("carbohydrates"),
+      date,
+      mealTime,
+    });
   };
 
   return (
@@ -78,6 +94,13 @@ function DishForm() {
           </MenuItem>
         ))}
       </ControlledTextField>
+
+      <MacroTable
+        calories={calculateMacro("calories")}
+        proteins={calculateMacro("proteins")}
+        fats={calculateMacro("fats")}
+        carbohydrates={calculateMacro("carbohydrates")}
+      />
 
       <List disablePadding>
         {fields.map((field, index) => (

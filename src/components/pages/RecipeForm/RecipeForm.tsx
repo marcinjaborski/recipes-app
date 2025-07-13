@@ -18,10 +18,9 @@ import {
   MenuItem,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
-import { Grid } from "@mui/system";
 import ControlledTextField from "@src/components/atoms/ControlledTextField";
+import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
 import useProducts from "@src/repository/useProducts.ts";
 import useUpsertRecipe from "@src/repository/useUpsertRecipe.ts";
 import { setRecipeToEdit } from "@src/store/GlobalSlice.ts";
@@ -107,20 +106,12 @@ function RecipeForm() {
         ))}
       </ControlledTextField>
 
-      <Grid container spacing={2} sx={{ textAlign: "center" }}>
-        <Grid size={3}>
-          <Typography>{t("calories", { calories: calculateMacro("calories") })}</Typography>
-        </Grid>
-        <Grid size={3}>
-          <Typography>{t("proteins", { proteins: calculateMacro("proteins") })}</Typography>
-        </Grid>
-        <Grid size={3}>
-          <Typography>{t("fats", { fats: calculateMacro("fats") })}</Typography>
-        </Grid>
-        <Grid size={3}>
-          <Typography>{t("carbohydrates", { carbohydrates: calculateMacro("carbohydrates") })}</Typography>
-        </Grid>
-      </Grid>
+      <MacroTable
+        calories={calculateMacro("calories")}
+        proteins={calculateMacro("proteins")}
+        fats={calculateMacro("fats")}
+        carbohydrates={calculateMacro("carbohydrates")}
+      />
 
       <Stack direction="row" spacing={2}>
         <List sx={{ flex: 1 }}>

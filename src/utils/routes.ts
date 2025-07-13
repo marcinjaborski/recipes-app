@@ -5,7 +5,7 @@ const routes = {
   recipesList: "/recipesList",
   recipesForm: "/recipesForm",
   recipesFormUpdate: "/recipesForm/update",
-  calendar: "/calendar",
+  calendar: "/",
   dishForm: "/dishForm",
 } as const;
 
@@ -17,5 +17,5 @@ function isValidRoute(pathname: string): pathname is Route {
 }
 
 export default routes;
-export { isValidRoute,routeNames };
+export { isValidRoute, routeNames };
 export type { Route };
