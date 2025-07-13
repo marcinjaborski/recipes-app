@@ -68,6 +68,9 @@ const resource = {
   },
   DishForm: {
     recipe: "Przepis",
+    addIngredient: "Dodaj składnik",
+    product: "Produkt",
+    amount: "Ilość",
   },
   Feedback: {
     error: "Coś poszło nie tak",
