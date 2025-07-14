@@ -1,5 +1,6 @@
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import Feedback from "@src/components/atoms/Feedback";
+import LoginDialog from "@src/components/organisms/LoginDialog";
 import TopBar from "@src/components/organisms/TopBar";
 import Calendar from "@src/components/pages/Calendar";
 import DishForm from "@src/components/pages/DishForm";
@@ -32,6 +33,7 @@ function App() {
           </Routes>
         </Box>
         <Navigation />
+        <LoginDialog />
         <Feedback />
       </Box>
     </ThemeProvider>

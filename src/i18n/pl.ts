@@ -12,6 +12,12 @@ const resource = {
       "/recipesForm/update": "Edytuj przepis",
     },
   },
+  LoginDialog: {
+    title: "Zaloguj się",
+    email: "Email",
+    password: "Hasło",
+    button: "Zaloguj",
+  },
   ProductList: {
     name: "Nazwa",
     calories: "kcal",

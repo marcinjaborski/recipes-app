@@ -21,6 +21,7 @@ import { useAppSelector } from "@src/store/store.ts";
 import { GRAMS } from "@src/utils/constants.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedProduct } from "@src/utils/types.ts";
+import _ from "lodash";
 import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -60,10 +61,13 @@ function DishForm() {
   const ingredients = watch("ingredients");
 
   const calculateMacro = (field: "calories" | "proteins" | "fats" | "carbohydrates") =>
-    ingredients.reduce((sum, { product, amount, included }) => {
-      if (!included) return sum;
-      return sum + product[field] * (amount / product.portion);
-    }, 0);
+    _.round(
+      ingredients.reduce((sum, { product, amount, included }) => {
+        if (!included) return sum;
+        return sum + product[field] * (amount / product.portion);
+      }, 0),
+      field === "calories" ? 0 : 1,
+    );
 
   useEffect(() => {
     const baseRecipe = recipes.find((recipe) => recipe.name === name);
