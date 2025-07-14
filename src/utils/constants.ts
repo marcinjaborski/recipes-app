@@ -15,3 +15,8 @@ export const MEAL_TIME = {
 } as const;
 
 export const GRAMS = "g";
+
+export const DAILY_CALORIES = 2000;
+export const DAILY_PROTEINS = 130;
+export const DAILY_FATS = 64;
+export const DAILY_CARBOHYDRATES = 225;

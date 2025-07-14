@@ -71,6 +71,10 @@ const resource = {
     dinner: "Kolacja",
     snack: "Przekąski",
     confirmDelete: "Czy na pewno usunąć to danie?",
+    calories: "Kalorie",
+    proteins: "Białko",
+    fats: "Tłuszcze",
+    carbohydrates: "Węglowodany",
   },
   DishForm: {
     recipe: "Przepis",

@@ -1,8 +1,7 @@
-import DeleteIcon from "@mui/icons-material/Delete";
-import EggIcon from "@mui/icons-material/Egg";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
-import { Box, Divider, IconButton, List, ListItem, Stack, TextField, Typography } from "@mui/material";
+import { Box, Stack, TextField } from "@mui/material";
+import MacroCounter from "@src/components/molecules/MacroCounter";
 import ConfirmDialog from "@src/components/organisms/ConfirmDialog";
+import MealTimeSection from "@src/components/organisms/MealTimeSection";
 import ProductDialog from "@src/components/organisms/ProductDialog";
 import useDelete from "@src/repository/useDelete.ts";
 import useDishes from "@src/repository/useDishes.ts";
@@ -10,10 +9,11 @@ import useInsertDish from "@src/repository/useInsertDish.ts";
 import { setDishData } from "@src/store/DishSlice.ts";
 import { setDishToDeleteId } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
-import { MEAL_TIME } from "@src/utils/constants.ts";
+import { DAILY_CALORIES, DAILY_CARBOHYDRATES, DAILY_FATS, DAILY_PROTEINS, MEAL_TIME } from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedProduct } from "@src/utils/types.ts";
+import _ from "lodash";
 import { DateTime } from "luxon";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -37,45 +37,45 @@ function Calendar() {
   ) => product[field] * (amount / product.portion);
 
   return (
-    <Stack gap={2} sx={{ p: 2 }}>
-      <TextField type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+    <Stack gap={2} sx={{ p: 2, height: "100%" }}>
+      <TextField type="date" sx={{ colorScheme: "dark" }} value={date} onChange={(e) => setDate(e.target.value)} />
       {Object.values(MEAL_TIME).map((mealTime) => (
-        <Stack key={mealTime}>
-          <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "center" }}>
-            <Typography>{t(mealTime)}</Typography>
-            <Box>
-              <IconButton onClick={() => setAddSingleProductDialogOpen(mealTime)}>
-                <EggIcon />
-              </IconButton>
-              <IconButton
-                onClick={() => {
-                  dispatch(setDishData({ date, mealTime }));
-                  navigate(routes.dishForm);
-                }}
-              >
-                <MenuBookIcon />
-              </IconButton>
-            </Box>
-          </Stack>
-          <List>
-            {dishes
-              ?.filter((dish) => dish.mealTime === mealTime)
-              .map((dish) => (
-                <ListItem
-                  key={dish.id}
-                  secondaryAction={
-                    <IconButton edge="end" onClick={() => dispatch(setDishToDeleteId(dish.id))}>
-                      <DeleteIcon />
-                    </IconButton>
-                  }
-                >
-                  {dish.name}
-                </ListItem>
-              ))}
-          </List>
-          <Divider />
-        </Stack>
+        <MealTimeSection
+          key={mealTime}
+          mealTime={mealTime}
+          dishes={dishes?.filter((dish) => dish.mealTime === mealTime)}
+          onAddSingleProductClick={() => setAddSingleProductDialogOpen(mealTime)}
+          onOpenDishForm={() => {
+            dispatch(setDishData({ date, mealTime }));
+            navigate(routes.dishForm);
+          }}
+        />
       ))}
+
+      <Box sx={{ flex: 1 }} />
+
+      <Stack sx={{ gap: 1 }}>
+        <MacroCounter
+          text={t("calories")}
+          value={_.sumBy(dishes, "calories")}
+          total={DAILY_CALORIES}
+          color="calories"
+        />
+        <MacroCounter
+          text={t("proteins")}
+          value={_.sumBy(dishes, "proteins")}
+          total={DAILY_PROTEINS}
+          color="proteins"
+        />
+        <MacroCounter text={t("fats")} value={_.sumBy(dishes, "fats")} total={DAILY_FATS} color="fats" />
+        <MacroCounter
+          text={t("carbohydrates")}
+          value={_.sumBy(dishes, "carbohydrates")}
+          total={DAILY_CARBOHYDRATES}
+          color="carbohydrates"
+        />
+      </Stack>
+
       <ProductDialog
         open={addSingleProductDialogOpen !== false}
         setOpen={(value) => !value && setAddSingleProductDialogOpen(value)}
@@ -83,7 +83,7 @@ function Calendar() {
           if (!addSingleProductDialogOpen) return;
           insertDish({
             name: product.name,
-            calories: calculateProductMacro(product, amount, "calories"),
+            calories: _.round(calculateProductMacro(product, amount, "calories")),
             proteins: calculateProductMacro(product, amount, "proteins"),
             fats: calculateProductMacro(product, amount, "fats"),
             carbohydrates: calculateProductMacro(product, amount, "carbohydrates"),
