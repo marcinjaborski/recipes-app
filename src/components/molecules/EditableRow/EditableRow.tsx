@@ -1,4 +1,5 @@
 import { Menu, MenuItem, PopoverPosition, TableCell, TableRow } from "@mui/material";
+import _ from "lodash";
 import { PointerEvent, useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LongPressReactEvents, useLongPress } from "use-long-press";
@@ -43,7 +44,7 @@ function EditableRow<T extends string>({ columns, data, onEdit, onDelete }: Edit
       <TableRow ref={rowRef} {...bind()} hover={holding}>
         {columns.map((columnName) => (
           <TableCell key={columnName} align={typeof data[columnName] === "number" ? "right" : "inherit"}>
-            {data[columnName]}
+            {typeof data[columnName] === "number" ? _.round(data[columnName], 1) : data[columnName]}
           </TableCell>
         ))}
       </TableRow>
