@@ -11,8 +11,8 @@ import {
   TextField,
 } from "@mui/material";
 import useProducts from "@src/repository/useProducts.ts";
-import { GRAMS } from "@src/utils/constants.ts";
-import useSortedProducts from "@src/utils/hooks/useSortedProducts.ts";
+import { GRAMS, PRODUCT_TYPE } from "@src/utils/constants.ts";
+import useSortedDataByRecord from "@src/utils/hooks/useSortedDataByRecord.ts";
 import { MappedProduct } from "@src/utils/types.ts";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -37,7 +37,7 @@ function ProductDialog({
 }: ProductDialogProps) {
   const { t } = useTranslation(["ProductDialog", "Shared"]);
   const { data: products } = useProducts();
-  const sortedProducts = useSortedProducts(products, "type");
+  const sortedProducts = useSortedDataByRecord(products, "type", PRODUCT_TYPE);
   const [productName, setProductName] = useState("");
   const [amount, setAmount] = useState<number | undefined>();
   const [included, setIncluded] = useState(true);

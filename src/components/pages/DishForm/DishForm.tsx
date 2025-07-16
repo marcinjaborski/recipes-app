@@ -17,8 +17,8 @@ import ProductDialog from "@src/components/organisms/ProductDialog";
 import useInsertDish from "@src/repository/useInsertDish.ts";
 import useRecipes from "@src/repository/useRecipes.ts";
 import { useAppSelector } from "@src/store/store.ts";
-import { GRAMS } from "@src/utils/constants.ts";
-import useSortedProducts from "@src/utils/hooks/useSortedProducts.ts";
+import { GRAMS, MEAL_TIME, PRODUCT_TYPE } from "@src/utils/constants.ts";
+import useSortedDataByRecord from "@src/utils/hooks/useSortedDataByRecord.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedProduct } from "@src/utils/types.ts";
 import _ from "lodash";
@@ -54,8 +54,8 @@ function DishForm() {
     control,
     name: "ingredients",
   });
-  const sortedFields = useSortedProducts(fields, "product.type");
   const { data: recipes } = useRecipes();
+  const sortedRecipes = useSortedDataByRecord(recipes, "recommendedMealTime", MEAL_TIME);
   const { mutate: insertDish } = useInsertDish({ onSuccess: () => navigate(routes.calendar) });
 
   const name = watch("name");
@@ -105,7 +105,7 @@ function DishForm() {
             inputValue={field.value}
             onInputChange={(_, newValue) => field.onChange(newValue)}
             renderInput={(params) => <TextField {...params} error={!!error} label={t("recipe")} />}
-            options={recipes.map((recipe) => recipe.name)}
+            options={sortedRecipes.map((recipe) => recipe.name)}
           />
         )}
       />
@@ -119,9 +119,13 @@ function DishForm() {
         />
       ) : null}
 
-      <List disablePadding>
-        {sortedFields.map((field, index) => (
-          <ListItem key={field.id} disablePadding>
+      <List disablePadding sx={{ display: "flex", flexDirection: "column" }}>
+        {fields.map((field, index) => (
+          <ListItem
+            key={field.id}
+            disablePadding
+            sx={{ order: Object.values(PRODUCT_TYPE).indexOf(field.product.type as keyof typeof PRODUCT_TYPE) }}
+          >
             <ListItemIcon>
               <Controller
                 control={control}
@@ -147,7 +151,7 @@ function DishForm() {
           </ListItem>
         ))}
         {name ? (
-          <ListItem sx={{ justifyContent: "center" }}>
+          <ListItem sx={{ justifyContent: "center", order: 9999 }}>
             <Fab size="small" onClick={() => setAddIngredientDialogOpen(true)}>
               <AddIcon />
             </Fab>
