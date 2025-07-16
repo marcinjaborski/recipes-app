@@ -1,4 +1,15 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Stack, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
+  Stack,
+  TextField,
+} from "@mui/material";
 import useProducts from "@src/repository/useProducts.ts";
 import { GRAMS } from "@src/utils/constants.ts";
 import { MappedProduct } from "@src/utils/types.ts";
@@ -9,57 +20,67 @@ import { NumericFormat } from "react-number-format";
 type ProductDialogProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
-  onAdd: (product: MappedProduct, amount: number) => void;
+  onAdd: (product: MappedProduct, amount: number, included: boolean) => void;
   filterProducts?: (product: MappedProduct) => boolean;
+  includedCheckbox?: boolean;
+  checkboxLabel?: string;
 };
 
-function ProductDialog({ open, setOpen, onAdd, filterProducts = () => true }: ProductDialogProps) {
+function ProductDialog({
+  open,
+  setOpen,
+  onAdd,
+  filterProducts = () => true,
+  includedCheckbox = false,
+  checkboxLabel = "",
+}: ProductDialogProps) {
   const { t } = useTranslation(["ProductDialog", "Shared"]);
   const { data: products } = useProducts();
-  const [ingredientId, setIngredientId] = useState("");
-  const [ingredientAmount, setIngredientAmount] = useState<number | undefined>();
+  const [productName, setProductName] = useState("");
+  const [amount, setAmount] = useState<number | undefined>();
+  const [included, setIncluded] = useState(true);
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
       <DialogTitle>{t("title")}</DialogTitle>
       <DialogContent>
         <Stack sx={{ gap: 2, mt: 1 }}>
-          <TextField
-            select
-            fullWidth
-            label={t("product")}
-            value={ingredientId}
-            onChange={(event) => {
-              setIngredientId(event.target.value);
-              const product = products.find((product) => product.id === Number(event.target.value));
-              if (product) setIngredientAmount(product.portion);
+          <Autocomplete
+            inputValue={productName}
+            onInputChange={(_, newValue) => {
+              setProductName(newValue);
+              const product = products.find((product) => product.name === newValue);
+              if (product) setAmount(product.portion);
             }}
-          >
-            {products.filter(filterProducts).map((product) => (
-              <MenuItem key={product.id} value={product.id}>
-                {product.name}
-              </MenuItem>
-            ))}
-          </TextField>
+            renderInput={(params) => <TextField {...params} label={t("product")} />}
+            options={products.filter(filterProducts).map((product) => product.name)}
+          />
           <NumericFormat
             customInput={TextField}
             suffix={GRAMS}
             fullWidth
             label={t("amount")}
-            value={ingredientAmount}
-            onValueChange={({ floatValue }) => setIngredientAmount(floatValue)}
+            value={amount}
+            onValueChange={({ floatValue }) => setAmount(floatValue)}
           />
+          {includedCheckbox ? (
+            <FormControlLabel
+              label={checkboxLabel}
+              control={<Checkbox checked={included} onChange={(event) => setIncluded(event.target.checked)} />}
+            />
+          ) : null}
         </Stack>
       </DialogContent>
       <DialogActions>
         <Button
           onClick={() => {
-            const product = products.find((product) => product.id === Number(ingredientId));
-            if (!product || !ingredientAmount) return;
-            onAdd(product, ingredientAmount);
+            const product = products.find((product) => product.name === productName);
+            if (!product || !amount) return;
+            onAdd(product, amount, included);
             setOpen(false);
-            setIngredientId("");
-            setIngredientAmount(undefined);
+            setProductName("");
+            setAmount(undefined);
+            setIncluded(true);
           }}
         >
           {t("Shared:add")}

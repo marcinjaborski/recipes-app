@@ -1,27 +1,9 @@
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Fab,
-  FormControlLabel,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  MenuItem,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Box, Button, Fab, IconButton, List, ListItem, ListItemText, MenuItem, Stack } from "@mui/material";
 import ControlledTextField from "@src/components/atoms/ControlledTextField";
 import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
-import useProducts from "@src/repository/useProducts.ts";
+import ProductDialog from "@src/components/organisms/ProductDialog";
 import useUpsertRecipe from "@src/repository/useUpsertRecipe.ts";
 import { setRecipeToEdit } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
@@ -32,7 +14,6 @@ import { MappedProduct } from "@src/utils/types.ts";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { NumericFormat } from "react-number-format";
 import { useNavigate } from "react-router-dom";
 
 export type RecipeFormData = {
@@ -47,7 +28,6 @@ function RecipeForm() {
   const { t } = useTranslation(["RecipeForm", "Shared"]);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { data: products } = useProducts();
   const { recipeToEdit } = useAppSelector((state) => state.global);
   const [ingredients, setIngredients] = useState<IngredientFormData[]>(
     !recipeToEdit
@@ -59,9 +39,6 @@ function RecipeForm() {
         ]),
   );
   const [ingredientDialogOpen, setIngredientDialogOpen] = useState(false);
-  const [dialogIngredient, setDialogIngredient] = useState<string | undefined>("");
-  const [dialogPortion, setDialogPortion] = useState<number | undefined>(undefined);
-  const [dialogDefaultIncluded, setDialogDefaultIncluded] = useState(true);
   const { control, handleSubmit } = useForm<RecipeFormData>({
     defaultValues: recipeToEdit
       ? {
@@ -144,17 +121,7 @@ function RecipeForm() {
           ))}
         </List>
         <Box>
-          <Fab
-            onClick={() => {
-              setDialogIngredient("");
-              setDialogPortion(undefined);
-              setDialogDefaultIncluded(true);
-              setIngredientDialogOpen(true);
-            }}
-            size="small"
-            color="primary"
-            sx={{ mt: 3.5 }}
-          >
+          <Fab onClick={() => setIngredientDialogOpen(true)} size="small" color="primary" sx={{ mt: 3.5 }}>
             <AddIcon />
           </Fab>
         </Box>
@@ -166,51 +133,15 @@ function RecipeForm() {
         {recipeToEdit ? t("Shared:edit") : t("Shared:create")}
       </Button>
 
-      <Dialog open={ingredientDialogOpen} onClose={() => setIngredientDialogOpen(false)} fullWidth>
-        <DialogTitle>{t("ingredientDialogTitle")}</DialogTitle>
-        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <Autocomplete
-            inputValue={dialogIngredient}
-            onInputChange={(_, newValue) => {
-              setDialogIngredient(newValue);
-              const ingredient = products.find((product) => product.name === newValue);
-              setDialogPortion(ingredient?.portion);
-            }}
-            renderInput={(params) => <TextField {...params} label={t("ingredient")} />}
-            options={products.map((product) => product.name)}
-            sx={{ mt: 1 }}
-          />
-          <NumericFormat
-            customInput={TextField}
-            fullWidth
-            value={dialogPortion}
-            suffix={GRAMS}
-            label={t("Shared:portion")}
-            onValueChange={({ floatValue }) => setDialogPortion(floatValue)}
-          />
-          <FormControlLabel
-            label={t("defaultIncluded")}
-            control={
-              <Checkbox
-                checked={dialogDefaultIncluded}
-                onChange={(event) => setDialogDefaultIncluded(event.target.checked)}
-              />
-            }
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              const ingredient = products.find((product) => product.name === dialogIngredient);
-              if (!ingredient || !dialogPortion) return;
-              setIngredients((prevState) => [...prevState, [ingredient, dialogPortion, dialogDefaultIncluded]]);
-              setIngredientDialogOpen(false);
-            }}
-          >
-            {t("Shared:add")}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ProductDialog
+        open={ingredientDialogOpen}
+        setOpen={setIngredientDialogOpen}
+        includedCheckbox
+        checkboxLabel={t("defaultIncluded")}
+        onAdd={(product, amount, included) => {
+          setIngredients((prevState) => [...prevState, [product, amount, included]]);
+        }}
+      />
     </Stack>
   );
 }

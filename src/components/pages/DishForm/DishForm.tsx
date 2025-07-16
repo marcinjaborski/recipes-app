@@ -1,5 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import {
+  Autocomplete,
   Box,
   Button,
   Checkbox,
@@ -8,11 +9,9 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  MenuItem,
   Stack,
   TextField,
 } from "@mui/material";
-import ControlledTextField from "@src/components/atoms/ControlledTextField";
 import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
 import ProductDialog from "@src/components/organisms/ProductDialog";
 import useInsertDish from "@src/repository/useInsertDish.ts";
@@ -95,13 +94,19 @@ function DishForm() {
 
   return (
     <Stack component="form" spacing={2} sx={{ p: 3, height: "100%" }} onSubmit={handleSubmit(onSubmit)}>
-      <ControlledTextField control={control} name="name" label={t("recipe")} select rules={{ required: true }}>
-        {recipes.map((recipe) => (
-          <MenuItem key={recipe.id} value={recipe.name}>
-            {recipe.name}
-          </MenuItem>
-        ))}
-      </ControlledTextField>
+      <Controller
+        control={control}
+        name="name"
+        rules={{ required: true }}
+        render={({ field, fieldState: { error } }) => (
+          <Autocomplete
+            inputValue={field.value}
+            onInputChange={(_, newValue) => field.onChange(newValue)}
+            renderInput={(params) => <TextField {...params} error={!!error} label={t("recipe")} />}
+            options={recipes.map((recipe) => recipe.name)}
+          />
+        )}
+      />
 
       {name ? (
         <MacroTable
@@ -133,7 +138,7 @@ function DishForm() {
                   suffix={GRAMS}
                   sx={{ width: 50 }}
                   value={value}
-                  onValueChange={({ floatValue }) => onChange(floatValue)}
+                  onValueChange={({ floatValue }) => onChange(floatValue || "")}
                 />
               )}
             />
