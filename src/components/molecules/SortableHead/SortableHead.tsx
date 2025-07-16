@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction } from "react";
 
 type SortableHeadProps<T extends string> = {
   columns: T[];
+  alignLeftColumns: T[];
   columnNames: Record<string, string>;
   sortBy: string;
   setSortBy: Dispatch<SetStateAction<string>>;
@@ -13,6 +14,7 @@ type SortableHeadProps<T extends string> = {
 
 function SortableHead<T extends string>({
   columns,
+  alignLeftColumns,
   columnNames,
   sortBy,
   setSortBy,
@@ -23,7 +25,7 @@ function SortableHead<T extends string>({
     <TableHead>
       <TableRow>
         {columns.map((columnName) => (
-          <TableCell key={columnName} align={columnName !== "name" ? "right" : "inherit"}>
+          <TableCell key={columnName} align={alignLeftColumns.includes(columnName) ? "inherit" : "right"}>
             <TableSortLabel
               active={sortBy === columnName}
               direction={sortDir}

@@ -15,10 +15,17 @@ import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-const COLUMNS = ["name", "calories", "proteins", "fats", "carbohydrates"] satisfies (keyof MappedRecipe)[];
+const COLUMNS = [
+  "name",
+  "calories",
+  "proteins",
+  "fats",
+  "carbohydrates",
+  "recommendedMealTime",
+] satisfies (keyof MappedRecipe)[];
 
 function RecipeList() {
-  const { t } = useTranslation("RecipeList");
+  const { t } = useTranslation(["RecipeList", "RecipeForm"]);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { recipeToDeleteId } = useAppSelector((state) => state.global);
@@ -32,6 +39,7 @@ function RecipeList() {
         <Table>
           <SortableHead
             columns={COLUMNS}
+            alignLeftColumns={["name", "recommendedMealTime"]}
             columnNames={Object.fromEntries(COLUMNS.map((column) => [column, t(column)]))}
             sortBy={sortBy}
             setSortBy={setSortBy as Dispatch<SetStateAction<string>>}
@@ -43,7 +51,7 @@ function RecipeList() {
               <EditableRow
                 key={recipe.id}
                 columns={COLUMNS}
-                data={recipe}
+                data={{ ...recipe, recommendedMealTime: t(`RecipeForm:${recipe.recommendedMealTime}`) }}
                 onEdit={() => {
                   dispatch(setRecipeToEdit(recipe));
                   navigate(routes.recipesFormUpdate);

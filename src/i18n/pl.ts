@@ -25,6 +25,7 @@ const resource = {
     fats: "T",
     carbohydrates: "W",
     portion: "Porcja",
+    type: "Typ",
     confirmDelete: "Czy na pewno usunąć ten produkt?",
   },
   ProductForm: {
@@ -45,6 +46,7 @@ const resource = {
     proteins: "B",
     fats: "T",
     carbohydrates: "W",
+    recommendedMealTime: "Pora dnia",
     confirmDelete: "Czy na pewno usunąć ten przepis?",
   },
   RecipeForm: {

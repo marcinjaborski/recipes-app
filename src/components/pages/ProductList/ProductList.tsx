@@ -15,10 +15,18 @@ import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-const COLUMNS = ["name", "calories", "proteins", "fats", "carbohydrates", "portion"] satisfies (keyof MappedProduct)[];
+const COLUMNS = [
+  "name",
+  "calories",
+  "proteins",
+  "fats",
+  "carbohydrates",
+  "portion",
+  "type",
+] satisfies (keyof MappedProduct)[];
 
 function ProductList() {
-  const { t } = useTranslation("ProductList");
+  const { t } = useTranslation(["ProductList", "ProductForm"]);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { productToDeleteId } = useAppSelector((state) => state.global);
@@ -32,6 +40,7 @@ function ProductList() {
         <Table>
           <SortableHead
             columns={COLUMNS}
+            alignLeftColumns={["name", "type"]}
             columnNames={Object.fromEntries(COLUMNS.map((column) => [column, t(column)]))}
             sortBy={sortBy}
             setSortBy={setSortBy as Dispatch<SetStateAction<string>>}
@@ -43,7 +52,7 @@ function ProductList() {
               <EditableRow
                 key={product.id}
                 columns={COLUMNS}
-                data={product}
+                data={{ ...product, type: t(`ProductForm:${product.type as "proteins"}`) }}
                 onEdit={() => {
                   dispatch(setProductToEdit(product));
                   navigate(routes.productFormUpdate);
