@@ -18,6 +18,7 @@ import useInsertDish from "@src/repository/useInsertDish.ts";
 import useRecipes from "@src/repository/useRecipes.ts";
 import { useAppSelector } from "@src/store/store.ts";
 import { GRAMS } from "@src/utils/constants.ts";
+import useSortedProducts from "@src/utils/hooks/useSortedProducts.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedProduct } from "@src/utils/types.ts";
 import _ from "lodash";
@@ -53,6 +54,7 @@ function DishForm() {
     control,
     name: "ingredients",
   });
+  const sortedFields = useSortedProducts(fields, "product.type");
   const { data: recipes } = useRecipes();
   const { mutate: insertDish } = useInsertDish({ onSuccess: () => navigate(routes.calendar) });
 
@@ -118,7 +120,7 @@ function DishForm() {
       ) : null}
 
       <List disablePadding>
-        {fields.map((field, index) => (
+        {sortedFields.map((field, index) => (
           <ListItem key={field.id} disablePadding>
             <ListItemIcon>
               <Controller

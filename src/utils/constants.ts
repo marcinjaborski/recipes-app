@@ -1,9 +1,10 @@
 export const PRODUCT_TYPE = {
   proteins: "proteins",
   carbohydrates: "carbohydrates",
-  dessert: "dessert",
-  fruit: "fruit",
   vegetable: "vegetable",
+  fats: "fats",
+  fruit: "fruit",
+  dessert: "dessert",
   spice: "spice",
 } as const;
 

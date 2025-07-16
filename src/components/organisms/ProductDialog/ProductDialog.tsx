@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import useProducts from "@src/repository/useProducts.ts";
 import { GRAMS } from "@src/utils/constants.ts";
+import useSortedProducts from "@src/utils/hooks/useSortedProducts.ts";
 import { MappedProduct } from "@src/utils/types.ts";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -36,6 +37,7 @@ function ProductDialog({
 }: ProductDialogProps) {
   const { t } = useTranslation(["ProductDialog", "Shared"]);
   const { data: products } = useProducts();
+  const sortedProducts = useSortedProducts(products, "type");
   const [productName, setProductName] = useState("");
   const [amount, setAmount] = useState<number | undefined>();
   const [included, setIncluded] = useState(true);
@@ -53,7 +55,7 @@ function ProductDialog({
               if (product) setAmount(product.portion);
             }}
             renderInput={(params) => <TextField {...params} label={t("product")} />}
-            options={products.filter(filterProducts).map((product) => product.name)}
+            options={sortedProducts.filter(filterProducts).map((product) => product.name)}
           />
           <NumericFormat
             customInput={TextField}

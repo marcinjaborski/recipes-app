@@ -32,6 +32,7 @@ const resource = {
     calories: "Kalorie: {{calories}}",
     type: "Typ",
     proteins: "Białko",
+    fats: "Tłuszcze",
     carbohydrates: "Węglowodany",
     dessert: "Dodatek",
     fruit: "Owoc",
