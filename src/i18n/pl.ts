@@ -41,6 +41,7 @@ const resource = {
     spice: "Przyprawa",
   },
   RecipeList: {
+    search: "Szukaj",
     name: "Nazwa",
     calories: "kcal",
     proteins: "B",

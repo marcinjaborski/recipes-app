@@ -8,3 +8,7 @@ export const calculateCalories = (proteins = 0, fats = 0, carbohydrates = 0) => 
 export const calculateCaloriesFromProduct = (product: Tables<"products">) => {
   return calculateCalories(product.proteins, product.fats, product.carbohydrates);
 };
+
+export const includesString = (string: string, substring: string) => {
+  return string.toLowerCase().includes(substring.toLowerCase());
+};
