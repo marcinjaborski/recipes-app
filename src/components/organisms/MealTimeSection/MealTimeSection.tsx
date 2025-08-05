@@ -1,17 +1,32 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import EggIcon from "@mui/icons-material/Egg";
+import InfoIcon from "@mui/icons-material/Info";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
-import { Box, Divider, IconButton, List, ListItem, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
 import { setDishToDeleteId } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch } from "@src/store/store.ts";
-import { Enums, Tables } from "@src/utils/database.types.ts";
+import { Enums } from "@src/utils/database.types.ts";
+import { MappedDish } from "@src/utils/types.ts";
 import _ from "lodash";
 import { useTranslation } from "react-i18next";
 
 type MealTimeSectionProps = {
   mealTime: Enums<"mealTime">;
-  dishes?: Tables<"dishes">[];
+  dishes?: MappedDish[];
   onAddSingleProductClick: () => void;
   onOpenDishForm: () => void;
 };
@@ -51,7 +66,25 @@ function MealTimeSection({ mealTime, dishes = [], onAddSingleProductClick, onOpe
               </IconButton>
             }
           >
-            {dish.name}
+            {dish.name}{" "}
+            {dish.ingredients.length ? (
+              <Tooltip
+                title={
+                  <Table>
+                    <TableBody>
+                      {dish.ingredients?.map((ingredient) => (
+                        <TableRow>
+                          <TableCell>{ingredient.product}</TableCell>
+                          <TableCell>{ingredient.amount}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                }
+              >
+                <InfoIcon />
+              </Tooltip>
+            ) : null}
           </ListItem>
         ))}
       </List>

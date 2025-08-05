@@ -18,4 +18,8 @@ export type MappedRecipe = Tables<"recipes"> & {
   carbohydrates: number;
 };
 
+export type MappedDish = Tables<"dishes"> & {
+  ingredients: { product: string; amount: string }[];
+};
+
 export type SortDir = "asc" | "desc";

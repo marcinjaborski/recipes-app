@@ -1,6 +1,7 @@
 import { Tables } from "@src/utils/database.types.ts";
 import { calculateCaloriesFromProduct } from "@src/utils/functions.ts";
-import { MappedProduct, MappedRecipe } from "@src/utils/types.ts";
+import { MappedDish, MappedProduct, MappedRecipe } from "@src/utils/types.ts";
+import _ from "lodash";
 
 export const mapProduct = (product: Tables<"products">): MappedProduct => {
   return {
@@ -31,4 +32,8 @@ export const mapRecipe = (
     fats: calculateMacro("fats"),
     carbohydrates: calculateMacro("carbohydrates"),
   };
+};
+
+export const mapDish = (dish: Tables<"dishes">): MappedDish => {
+  return { ...dish, ingredients: _.isArray(dish.ingredients) ? dish.ingredients : [] } as MappedDish;
 };

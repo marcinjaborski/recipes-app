@@ -89,6 +89,9 @@ function DishForm() {
       proteins: calculateMacro("proteins"),
       fats: calculateMacro("fats"),
       carbohydrates: calculateMacro("carbohydrates"),
+      ingredients: ingredients
+        .filter(({ included }) => included)
+        .map(({ product, amount }) => ({ product: product.name, amount })),
       date,
       mealTime,
     });
