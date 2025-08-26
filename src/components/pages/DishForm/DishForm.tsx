@@ -61,7 +61,9 @@ function DishForm() {
   const name = watch("name");
   const ingredients = watch("ingredients");
 
-  const calculateMacro = (field: "calories" | "proteins" | "fats" | "carbohydrates") =>
+  const calculateMacro = (
+    field: "calories" | "proteins" | "fats" | "carbohydrates" | "saturatedFats" | "sugar" | "fiber" | "salt",
+  ) =>
     _.round(
       ingredients.reduce((sum, { product, amount, included }) => {
         if (!included) return sum;
@@ -88,7 +90,15 @@ function DishForm() {
       calories: calculateMacro("calories"),
       proteins: calculateMacro("proteins"),
       fats: calculateMacro("fats"),
+      saturatedFats: calculateMacro("saturatedFats"),
       carbohydrates: calculateMacro("carbohydrates"),
+      sugar: calculateMacro("sugar"),
+      fiber: calculateMacro("fiber"),
+      salt: calculateMacro("salt"),
+      vegetables: _.sumBy(
+        ingredients.filter((ingredient) => ingredient.product.type === PRODUCT_TYPE.vegetable),
+        "amount",
+      ),
       ingredients: ingredients
         .filter(({ included }) => included)
         .map(({ product, amount }) => ({ product: product.name, amount })),

@@ -4,6 +4,7 @@ export type TableType = keyof Database["public"]["Tables"];
 
 export type MappedProduct = Tables<"products"> & {
   calories: number;
+  caloriesPer100g: number;
 };
 
 export type Ingredient = Omit<Tables<"recipes_products">, "product_id" | "recipe_id"> & {

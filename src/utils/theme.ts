@@ -1,12 +1,17 @@
 import { createTheme, PaletteColorOptions } from "@mui/material";
-import { amber, cyan, indigo, pink } from "@mui/material/colors";
+import { amber, brown, cyan, green, grey, indigo, pink } from "@mui/material/colors";
 
 declare module "@mui/material/styles" {
   interface PaletteOptions {
     calories?: PaletteColorOptions;
     proteins?: PaletteColorOptions;
     fats?: PaletteColorOptions;
+    saturatedFats?: PaletteColorOptions;
     carbohydrates?: PaletteColorOptions;
+    sugar?: PaletteColorOptions;
+    fiber?: PaletteColorOptions;
+    salt?: PaletteColorOptions;
+    vegetables?: PaletteColorOptions;
   }
 }
 
@@ -15,7 +20,12 @@ declare module "@mui/material/LinearProgress" {
     calories: true;
     proteins: true;
     fats: true;
+    saturatedFats: true;
     carbohydrates: true;
+    sugar: true;
+    fiber: true;
+    salt: true;
+    vegetables: true;
   }
 }
 
@@ -37,8 +47,23 @@ export const mainTheme = createTheme({
     fats: {
       main: amber[400],
     },
+    saturatedFats: {
+      main: amber[200],
+    },
     carbohydrates: {
       main: indigo[400],
+    },
+    sugar: {
+      main: indigo[300],
+    },
+    fiber: {
+      main: brown[400],
+    },
+    salt: {
+      main: grey[400],
+    },
+    vegetables: {
+      main: green[300],
     },
     success: {
       main: "#90ee90",

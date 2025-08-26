@@ -1,12 +1,15 @@
+import { HUNDRED } from "@src/utils/constants.ts";
 import { Tables } from "@src/utils/database.types.ts";
 import { calculateCaloriesFromProduct } from "@src/utils/functions.ts";
 import { MappedDish, MappedProduct, MappedRecipe } from "@src/utils/types.ts";
 import _ from "lodash";
 
 export const mapProduct = (product: Tables<"products">): MappedProduct => {
+  const calories = calculateCaloriesFromProduct(product);
   return {
     ...product,
-    calories: calculateCaloriesFromProduct(product),
+    calories: calories * (product.portion / HUNDRED),
+    caloriesPer100g: calories,
   };
 };
 

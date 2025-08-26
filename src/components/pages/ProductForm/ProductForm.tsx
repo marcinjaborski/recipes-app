@@ -4,7 +4,7 @@ import ControlledTextField from "@src/components/atoms/ControlledTextField";
 import useUpsertProduct from "@src/repository/useUpsertProduct.ts";
 import { setProductToEdit } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
-import { GRAMS, PRODUCT_TYPE } from "@src/utils/constants.ts";
+import { GRAMS, HUNDRED, PRODUCT_TYPE } from "@src/utils/constants.ts";
 import { calculateCalories } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
 import { useEffect } from "react";
@@ -16,7 +16,11 @@ export type ProductFormData = {
   name: string;
   proteins: number;
   fats: number;
+  saturatedFats: number;
   carbohydrates: number;
+  sugar: number;
+  fiber: number;
+  salt: number;
   portion: number;
   type: string;
 };
@@ -32,7 +36,11 @@ function ProductForm() {
           name: productToEdit.name,
           proteins: productToEdit.proteins,
           fats: productToEdit.fats,
+          saturatedFats: productToEdit.saturatedFats,
           carbohydrates: productToEdit.carbohydrates,
+          sugar: productToEdit.sugar,
+          fiber: productToEdit.fiber,
+          salt: productToEdit.salt,
           portion: productToEdit.portion,
           type: productToEdit.type,
         }
@@ -42,7 +50,8 @@ function ProductForm() {
         },
   });
   const { mutate: upsertProduct } = useUpsertProduct({ onSuccess: () => navigate(routes.productList) });
-  const calories = calculateCalories(watch("proteins"), watch("fats"), watch("carbohydrates"));
+  const caloriesPer100g = calculateCalories(watch("proteins"), watch("fats"), watch("carbohydrates"));
+  const caloriesPerPortion = (caloriesPer100g * watch("portion")) / HUNDRED || 0;
   const onSubmit = (data: ProductFormData) => {
     upsertProduct(productToEdit ? { id: productToEdit.id, ...data } : data);
     dispatch(setProductToEdit(null));
@@ -55,37 +64,6 @@ function ProductForm() {
   return (
     <Stack component="form" spacing={2} sx={{ p: 3, height: "100%" }} onSubmit={handleSubmit(onSubmit)}>
       <ControlledTextField control={control} name="name" label={t("name")} rules={{ required: true }} />
-      <ControlledNumberField
-        control={control}
-        name="portion"
-        label={t("Shared:portion")}
-        suffix={GRAMS}
-        rules={{ required: true }}
-      />
-      <Typography>{t("calories", { calories })}</Typography>
-      <Stack direction="row" spacing={2}>
-        <ControlledNumberField
-          control={control}
-          name="proteins"
-          label={t("Shared:protein")}
-          suffix={GRAMS}
-          rules={{ required: true }}
-        />
-        <ControlledNumberField
-          control={control}
-          name="fats"
-          label={t("Shared:fat")}
-          suffix={GRAMS}
-          rules={{ required: true }}
-        />
-        <ControlledNumberField
-          control={control}
-          name="carbohydrates"
-          label={t("Shared:carbohydrates")}
-          suffix={GRAMS}
-          rules={{ required: true }}
-        />
-      </Stack>
       <ControlledTextField select control={control} name="type" label={t("type")}>
         {Object.values(PRODUCT_TYPE).map((type) => (
           <MenuItem key={type} value={type}>
@@ -93,6 +71,63 @@ function ProductForm() {
           </MenuItem>
         ))}
       </ControlledTextField>
+      <ControlledNumberField
+        control={control}
+        name="portion"
+        label={t("Shared:portion")}
+        suffix={GRAMS}
+        rules={{ required: true }}
+      />
+      <Typography>{t("calories", { calories: caloriesPer100g, caloriesPerPortion })}</Typography>
+      <ControlledNumberField
+        control={control}
+        name="fats"
+        label={t("Shared:fat")}
+        suffix={GRAMS}
+        rules={{ required: true }}
+      />
+      <ControlledNumberField
+        control={control}
+        name="saturatedFats"
+        label={t("Shared:saturatedFat")}
+        suffix={GRAMS}
+        rules={{ required: true }}
+      />
+      <ControlledNumberField
+        control={control}
+        name="carbohydrates"
+        label={t("Shared:carbohydrates")}
+        suffix={GRAMS}
+        rules={{ required: true }}
+      />
+      <ControlledNumberField
+        control={control}
+        name="sugar"
+        label={t("Shared:sugar")}
+        suffix={GRAMS}
+        rules={{ required: true }}
+      />
+      <ControlledNumberField
+        control={control}
+        name="fiber"
+        label={t("Shared:fiber")}
+        suffix={GRAMS}
+        rules={{ required: true }}
+      />
+      <ControlledNumberField
+        control={control}
+        name="proteins"
+        label={t("Shared:protein")}
+        suffix={GRAMS}
+        rules={{ required: true }}
+      />
+      <ControlledNumberField
+        control={control}
+        name="salt"
+        label={t("Shared:salt")}
+        suffix={GRAMS}
+        rules={{ required: true }}
+      />
 
       <Box sx={{ flex: 1 }} />
 

@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 const COLUMNS = [
   "name",
   "calories",
+  "caloriesPer100g",
   "proteins",
   "fats",
   "carbohydrates",

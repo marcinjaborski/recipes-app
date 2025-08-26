@@ -10,7 +10,19 @@ import useInsertDish from "@src/repository/useInsertDish.ts";
 import { setDishData } from "@src/store/DishSlice.ts";
 import { setDishToDeleteId } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
-import { DAILY_CALORIES, DAILY_CARBOHYDRATES, DAILY_FATS, DAILY_PROTEINS, MEAL_TIME } from "@src/utils/constants.ts";
+import {
+  DAILY_CALORIES,
+  DAILY_CARBOHYDRATES,
+  DAILY_FATS,
+  DAILY_FIBER,
+  DAILY_PROTEINS,
+  DAILY_SALT,
+  DAILY_SATURATED_FATS,
+  DAILY_SUGAR,
+  DAILY_VEGETABLES,
+  MEAL_TIME,
+  PRODUCT_TYPE,
+} from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedProduct } from "@src/utils/types.ts";
@@ -35,11 +47,11 @@ function Calendar() {
   const calculateProductMacro = (
     product: MappedProduct,
     amount: number,
-    field: "calories" | "proteins" | "fats" | "carbohydrates",
+    field: "calories" | "proteins" | "fats" | "carbohydrates" | "saturatedFats" | "sugar" | "fiber" | "salt",
   ) => product[field] * (amount / product.portion);
 
   return (
-    <Stack gap={2} sx={{ p: 2, height: "100%" }}>
+    <Stack gap={2} sx={{ p: 2, minHeight: "100%" }}>
       <TextField type="date" sx={{ colorScheme: "dark" }} value={date} onChange={(e) => setDate(e.target.value)} />
       {Object.values(MEAL_TIME).map((mealTime) => (
         <MealTimeSection
@@ -65,17 +77,32 @@ function Calendar() {
           color="calories"
         />
         <MacroCounter
-          text={t("proteins")}
+          text={t("Shared:protein")}
           value={_.sumBy(dishes, "proteins")}
           total={DAILY_PROTEINS}
           color="proteins"
         />
-        <MacroCounter text={t("fats")} value={_.sumBy(dishes, "fats")} total={DAILY_FATS} color="fats" />
+        <MacroCounter text={t("Shared:fat")} value={_.sumBy(dishes, "fats")} total={DAILY_FATS} color="fats" />
         <MacroCounter
-          text={t("carbohydrates")}
+          text={t("Shared:saturatedFat")}
+          value={_.sumBy(dishes, "saturatedFats")}
+          total={DAILY_SATURATED_FATS}
+          color="saturatedFats"
+        />
+        <MacroCounter
+          text={t("Shared:carbohydrates")}
           value={_.sumBy(dishes, "carbohydrates")}
           total={DAILY_CARBOHYDRATES}
           color="carbohydrates"
+        />
+        <MacroCounter text={t("Shared:sugar")} value={_.sumBy(dishes, "sugar")} total={DAILY_SUGAR} color="sugar" />
+        <MacroCounter text={t("Shared:fiber")} value={_.sumBy(dishes, "fiber")} total={DAILY_FIBER} color="fiber" />
+        <MacroCounter text={t("Shared:salt")} value={_.sumBy(dishes, "salt")} total={DAILY_SALT} color="salt" />
+        <MacroCounter
+          text={t("vegetables")}
+          value={_.sumBy(dishes, "vegetables")}
+          total={DAILY_VEGETABLES}
+          color="vegetables"
         />
       </Stack>
 
@@ -97,7 +124,12 @@ function Calendar() {
             calories: _.round(calculateProductMacro(product, amount, "calories")),
             proteins: calculateProductMacro(product, amount, "proteins"),
             fats: calculateProductMacro(product, amount, "fats"),
+            saturatedFats: calculateProductMacro(product, amount, "saturatedFats"),
             carbohydrates: calculateProductMacro(product, amount, "carbohydrates"),
+            sugar: calculateProductMacro(product, amount, "sugar"),
+            fiber: calculateProductMacro(product, amount, "fiber"),
+            salt: calculateProductMacro(product, amount, "salt"),
+            vegetables: product.type === PRODUCT_TYPE.vegetable ? amount : 0,
             date,
             mealTime: addSingleProductDialogOpen,
           });

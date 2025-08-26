@@ -20,7 +20,8 @@ const resource = {
   },
   ProductList: {
     name: "Nazwa",
-    calories: "kcal",
+    calories: "kcal/p",
+    caloriesPer100g: "kcal/100g",
     proteins: "B",
     fats: "T",
     carbohydrates: "W",
@@ -30,7 +31,7 @@ const resource = {
   },
   ProductForm: {
     name: "Nazwa",
-    calories: "Kalorie: {{calories}}",
+    calories: "Kalorie: {{calories}}, w porcji: {{caloriesPerPortion}}",
     type: "Typ",
     proteins: "Białko",
     fats: "Tłuszcze",
@@ -77,9 +78,7 @@ const resource = {
     ingredients: "Składniki",
     confirmDelete: "Czy na pewno usunąć to danie?",
     calories: "Kalorie",
-    proteins: "Białko",
-    fats: "Tłuszcze",
-    carbohydrates: "Węglowodany",
+    vegetables: "Warzywa",
   },
   DishForm: {
     recipe: "Przepis",
@@ -100,7 +99,11 @@ const resource = {
   Shared: {
     protein: "Białko",
     fat: "Tłuszcze",
+    saturatedFat: "Tłuszcze nasycone",
     carbohydrates: "Węglowodany",
+    sugar: "Cukry proste",
+    fiber: "Błonnik",
+    salt: "Sól",
     portion: "Porcja",
     add: "Dodaj",
     create: "Stwórz",
