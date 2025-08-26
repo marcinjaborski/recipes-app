@@ -74,6 +74,7 @@ const resource = {
     lunch: "Obiad",
     dinner: "Kolacja",
     snack: "Przekąski",
+    ingredients: "Składniki",
     confirmDelete: "Czy na pewno usunąć to danie?",
     calories: "Kalorie",
     proteins: "Białko",
