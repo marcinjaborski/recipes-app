@@ -3,6 +3,7 @@ import MacroCounter from "@src/components/molecules/MacroCounter";
 import ConfirmDialog from "@src/components/organisms/ConfirmDialog";
 import MealTimeSection from "@src/components/organisms/MealTimeSection";
 import ProductDialog from "@src/components/organisms/ProductDialog";
+import QuickMacroDialog from "@src/components/organisms/QuickMacroDialog";
 import useDelete from "@src/repository/useDelete.ts";
 import useDishes from "@src/repository/useDishes.ts";
 import useInsertDish from "@src/repository/useInsertDish.ts";
@@ -26,6 +27,7 @@ function Calendar() {
   const { dishToDeleteId } = useAppSelector((state) => state.global);
   const { mutate: deleteDish } = useDelete("dishes");
   const [date, setDate] = useState(DateTime.now().toSQLDate());
+  const [quickAddMacroDialogOpen, setQuickAddMacroDialogOpen] = useState<Enums<"mealTime"> | false>(false);
   const [addSingleProductDialogOpen, setAddSingleProductDialogOpen] = useState<Enums<"mealTime"> | false>(false);
   const { data: dishes } = useDishes({ date });
   const { mutate: insertDish } = useInsertDish();
@@ -44,6 +46,7 @@ function Calendar() {
           key={mealTime}
           mealTime={mealTime}
           dishes={dishes?.filter((dish) => dish.mealTime === mealTime)}
+          onQuickAddMacroClick={() => setQuickAddMacroDialogOpen(mealTime)}
           onAddSingleProductClick={() => setAddSingleProductDialogOpen(mealTime)}
           onOpenDishForm={() => {
             dispatch(setDishData({ date, mealTime }));
@@ -76,6 +79,14 @@ function Calendar() {
         />
       </Stack>
 
+      <QuickMacroDialog
+        open={quickAddMacroDialogOpen !== false}
+        setOpen={(value) => !value && setQuickAddMacroDialogOpen(false)}
+        onAdd={(data) => {
+          if (!quickAddMacroDialogOpen) return;
+          insertDish({ ...data, date, mealTime: quickAddMacroDialogOpen });
+        }}
+      />
       <ProductDialog
         open={addSingleProductDialogOpen !== false}
         setOpen={(value) => !value && setAddSingleProductDialogOpen(value)}

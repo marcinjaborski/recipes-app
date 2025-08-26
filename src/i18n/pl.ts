@@ -89,6 +89,11 @@ const resource = {
     product: "Produkt",
     amount: "Ilość",
   },
+  QuickMacroDialog: {
+    title: "Szybki posiłek",
+    name: "Nazwa",
+    calories: "Kalorie: {{calories}}",
+  },
   Feedback: {
     error: "Coś poszło nie tak",
   },

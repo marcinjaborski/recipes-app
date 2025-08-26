@@ -1,3 +1,4 @@
+import BoltIcon from "@mui/icons-material/Bolt";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EggIcon from "@mui/icons-material/Egg";
 import InfoIcon from "@mui/icons-material/Info";
@@ -31,11 +32,18 @@ import { useTranslation } from "react-i18next";
 type MealTimeSectionProps = {
   mealTime: Enums<"mealTime">;
   dishes?: MappedDish[];
+  onQuickAddMacroClick: () => void;
   onAddSingleProductClick: () => void;
   onOpenDishForm: () => void;
 };
 
-function MealTimeSection({ mealTime, dishes = [], onAddSingleProductClick, onOpenDishForm }: MealTimeSectionProps) {
+function MealTimeSection({
+  mealTime,
+  dishes = [],
+  onQuickAddMacroClick,
+  onAddSingleProductClick,
+  onOpenDishForm,
+}: MealTimeSectionProps) {
   const { t } = useTranslation(["Calendar", "Shared"]);
   const dispatch = useAppDispatch();
   const [ingredientDialogOpen, setIngredientDialogOpen] = useState(false);
@@ -51,6 +59,9 @@ function MealTimeSection({ mealTime, dishes = [], onAddSingleProductClick, onOpe
       <Stack direction="row" spacing={2} sx={{ justifyContent: "space-between", alignItems: "center" }}>
         <Typography>{t(mealTime)}</Typography>
         <Stack direction="row">
+          <IconButton onClick={onQuickAddMacroClick}>
+            <BoltIcon />
+          </IconButton>
           <IconButton onClick={onAddSingleProductClick}>
             <EggIcon />
           </IconButton>
