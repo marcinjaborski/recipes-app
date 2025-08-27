@@ -19,9 +19,9 @@ const resource = {
     button: "Zaloguj",
   },
   ProductList: {
+    macroPerPortion: "Makro na porcję",
     name: "Nazwa",
-    calories: "kcal/p",
-    caloriesPer100g: "kcal/100g",
+    calories: "kcal",
     proteins: "B",
     fats: "T",
     carbohydrates: "W",
@@ -78,7 +78,7 @@ const resource = {
     ingredients: "Składniki",
     confirmDelete: "Czy na pewno usunąć to danie?",
     calories: "Kalorie",
-    vegetables: "Warzywa",
+    vegetables: "Owoce i warzywa",
   },
   DishForm: {
     recipe: "Przepis",

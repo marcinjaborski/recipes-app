@@ -1,12 +1,14 @@
 import { Box, Button, ListItemText, MenuItem, Stack, Typography } from "@mui/material";
 import ControlledNumberField from "@src/components/atoms/ControlledNumberField";
 import ControlledTextField from "@src/components/atoms/ControlledTextField";
+import useProducts from "@src/repository/useProducts.ts";
 import useUpsertProduct from "@src/repository/useUpsertProduct.ts";
-import { setProductToEdit } from "@src/store/GlobalSlice.ts";
+import { setProductIdToEdit } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
 import { GRAMS, HUNDRED, PRODUCT_TYPE } from "@src/utils/constants.ts";
 import { calculateCalories } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
+import _ from "lodash";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -29,7 +31,9 @@ function ProductForm() {
   const { t } = useTranslation(["ProductForm", "Shared"]);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { productToEdit } = useAppSelector((state) => state.global);
+  const { productIdToEdit } = useAppSelector((state) => state.global);
+  const { data: products } = useProducts();
+  const productToEdit = products.find((product) => product.id === productIdToEdit);
   const { control, watch, setValue, handleSubmit } = useForm<ProductFormData>({
     defaultValues: {
       name: "",
@@ -38,10 +42,10 @@ function ProductForm() {
   });
   const { mutate: upsertProduct } = useUpsertProduct({ onSuccess: () => navigate(routes.productList) });
   const caloriesPer100g = calculateCalories(watch("proteins"), watch("fats"), watch("carbohydrates"));
-  const caloriesPerPortion = (caloriesPer100g * watch("portion")) / HUNDRED || 0;
+  const caloriesPerPortion = _.round((caloriesPer100g * watch("portion")) / HUNDRED || 0, 1);
   const onSubmit = (data: ProductFormData) => {
     upsertProduct(productToEdit ? { id: productToEdit.id, ...data } : data);
-    dispatch(setProductToEdit(null));
+    dispatch(setProductIdToEdit(null));
   };
 
   useEffect(() => {

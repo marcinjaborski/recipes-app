@@ -7,13 +7,14 @@ type MacroCounterProps = {
   value: number;
   total: number;
   color: ComponentProps<typeof LinearProgress>["color"];
+  precision?: number;
 };
 
-function MacroCounter({ text, value, total, color }: MacroCounterProps) {
+function MacroCounter({ text, value, total, color, precision = 0 }: MacroCounterProps) {
   return (
     <Stack>
       <Typography>
-        {text} {_.round(value)}/{total}
+        {text} {_.round(value, precision)}/{total}
       </Typography>
       <LinearProgress variant="determinate" value={(value / total) * 100} color={color} />
     </Stack>

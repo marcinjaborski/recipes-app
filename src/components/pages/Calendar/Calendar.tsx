@@ -24,8 +24,8 @@ import {
   PRODUCT_TYPE,
 } from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
+import { calculateMacro } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
-import { MappedProduct } from "@src/utils/types.ts";
 import _ from "lodash";
 import { DateTime } from "luxon";
 import { useState } from "react";
@@ -43,12 +43,6 @@ function Calendar() {
   const [addSingleProductDialogOpen, setAddSingleProductDialogOpen] = useState<Enums<"mealTime"> | false>(false);
   const { data: dishes } = useDishes({ date });
   const { mutate: insertDish } = useInsertDish();
-
-  const calculateProductMacro = (
-    product: MappedProduct,
-    amount: number,
-    field: "calories" | "proteins" | "fats" | "carbohydrates" | "saturatedFats" | "sugar" | "fiber" | "salt",
-  ) => product[field] * (amount / product.portion);
 
   return (
     <Stack gap={2} sx={{ p: 2, minHeight: "100%" }}>
@@ -97,7 +91,13 @@ function Calendar() {
         />
         <MacroCounter text={t("Shared:sugar")} value={_.sumBy(dishes, "sugar")} total={DAILY_SUGAR} color="sugar" />
         <MacroCounter text={t("Shared:fiber")} value={_.sumBy(dishes, "fiber")} total={DAILY_FIBER} color="fiber" />
-        <MacroCounter text={t("Shared:salt")} value={_.sumBy(dishes, "salt")} total={DAILY_SALT} color="salt" />
+        <MacroCounter
+          text={t("Shared:salt")}
+          value={_.sumBy(dishes, "salt")}
+          total={DAILY_SALT}
+          color="salt"
+          precision={2}
+        />
         <MacroCounter
           text={t("vegetables")}
           value={_.sumBy(dishes, "vegetables")}
@@ -119,17 +119,18 @@ function Calendar() {
         setOpen={(value) => !value && setAddSingleProductDialogOpen(value)}
         onAdd={(product, amount) => {
           if (!addSingleProductDialogOpen) return;
+          const productForMacro = [{ product, amount, included: true }];
           insertDish({
             name: product.name,
-            calories: _.round(calculateProductMacro(product, amount, "calories")),
-            proteins: calculateProductMacro(product, amount, "proteins"),
-            fats: calculateProductMacro(product, amount, "fats"),
-            saturatedFats: calculateProductMacro(product, amount, "saturatedFats"),
-            carbohydrates: calculateProductMacro(product, amount, "carbohydrates"),
-            sugar: calculateProductMacro(product, amount, "sugar"),
-            fiber: calculateProductMacro(product, amount, "fiber"),
-            salt: calculateProductMacro(product, amount, "salt"),
-            vegetables: product.type === PRODUCT_TYPE.vegetable ? amount : 0,
+            calories: calculateMacro("calories", productForMacro),
+            proteins: calculateMacro("proteins", productForMacro),
+            fats: calculateMacro("fats", productForMacro),
+            saturatedFats: calculateMacro("saturatedFats", productForMacro),
+            carbohydrates: calculateMacro("carbohydrates", productForMacro),
+            sugar: calculateMacro("sugar", productForMacro),
+            fiber: calculateMacro("fiber", productForMacro),
+            salt: calculateMacro("salt", productForMacro),
+            vegetables: product.type === PRODUCT_TYPE.fruit || product.type === PRODUCT_TYPE.vegetable ? amount : 0,
             date,
             mealTime: addSingleProductDialogOpen,
           });

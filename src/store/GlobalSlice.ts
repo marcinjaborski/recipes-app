@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { MappedProduct, MappedRecipe } from "@src/utils/types.ts";
+import { MappedRecipe } from "@src/utils/types.ts";
 
 export type GlobalState = {
-  productToEdit: MappedProduct | null;
+  productIdToEdit: number | null;
   productToDeleteId: number | null;
   recipeToEdit: MappedRecipe | null;
   recipeToDeleteId: number | null;
@@ -10,7 +10,7 @@ export type GlobalState = {
 };
 
 const initialState: GlobalState = {
-  productToEdit: null,
+  productIdToEdit: null,
   productToDeleteId: null,
   recipeToEdit: null,
   recipeToDeleteId: null,
@@ -21,8 +21,8 @@ const globalSlice = createSlice({
   name: "globalSlice",
   initialState,
   reducers: {
-    setProductToEdit: (state, { payload }: PayloadAction<MappedProduct | null>) => {
-      state.productToEdit = payload;
+    setProductIdToEdit: (state, { payload }: PayloadAction<number | null>) => {
+      state.productIdToEdit = payload;
     },
     setProductToDeleteId: (state, { payload }: PayloadAction<number | null>) => {
       state.productToDeleteId = payload;
@@ -39,6 +39,6 @@ const globalSlice = createSlice({
   },
 });
 
-export const { setProductToEdit, setProductToDeleteId, setRecipeToEdit, setRecipeToDeleteId, setDishToDeleteId } =
+export const { setProductIdToEdit, setProductToDeleteId, setRecipeToEdit, setRecipeToDeleteId, setDishToDeleteId } =
   globalSlice.actions;
 export const { reducer: globalReducer } = globalSlice;

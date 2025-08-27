@@ -9,6 +9,7 @@ import { setRecipeToEdit } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
 import { GRAMS, MEAL_TIME } from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
+import { calculateMacro } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedProduct } from "@src/utils/types.ts";
 import { useState } from "react";
@@ -59,11 +60,7 @@ function RecipeForm() {
     dispatch(setRecipeToEdit(null));
   };
 
-  const calculateMacro = (field: "calories" | "proteins" | "fats" | "carbohydrates") =>
-    ingredients.reduce((sum, [ingredient, amount, defaultIncluded]) => {
-      if (!defaultIncluded) return sum;
-      return sum + ingredient[field] * (amount / ingredient.portion);
-    }, 0);
+  const ingredientsForMacro = ingredients.map(([product, amount, included]) => ({ product, amount, included }));
 
   return (
     <Stack component="form" spacing={2} sx={{ p: 3, height: "100%" }} onSubmit={handleSubmit(onSubmit)}>
@@ -84,10 +81,10 @@ function RecipeForm() {
       </ControlledTextField>
 
       <MacroTable
-        calories={calculateMacro("calories")}
-        proteins={calculateMacro("proteins")}
-        fats={calculateMacro("fats")}
-        carbohydrates={calculateMacro("carbohydrates")}
+        calories={calculateMacro("calories", ingredientsForMacro)}
+        proteins={calculateMacro("proteins", ingredientsForMacro)}
+        fats={calculateMacro("fats", ingredientsForMacro)}
+        carbohydrates={calculateMacro("carbohydrates", ingredientsForMacro)}
       />
 
       <Stack direction="row" spacing={2}>

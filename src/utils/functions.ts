@@ -1,4 +1,6 @@
+import { HUNDRED } from "@src/utils/constants.ts";
 import { Tables } from "@src/utils/database.types.ts";
+import { MappedProduct } from "@src/utils/types.ts";
 import _ from "lodash";
 
 export const calculateCalories = (proteins = 0, fats = 0, carbohydrates = 0) => {
@@ -11,4 +13,15 @@ export const calculateCaloriesFromProduct = (product: Tables<"products">) => {
 
 export const includesString = (string: string, substring: string) => {
   return string.toLowerCase().includes(substring.toLowerCase());
+};
+
+export const calculateMacro = (
+  field: Exclude<keyof MappedProduct, "id" | "name" | "created_at" | "type">,
+  ingredients: { product: MappedProduct; amount: number; included: boolean }[],
+) => {
+  const value = ingredients.reduce((sum, ingredient) => {
+    if (!ingredient.included) return sum;
+    return sum + (ingredient.product[field] * ingredient.amount) / HUNDRED;
+  }, 0);
+  return _.round(value, field.includes("calories") ? 0 : field === "salt" ? 2 : 1);
 };

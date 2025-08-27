@@ -18,6 +18,7 @@ import useInsertDish from "@src/repository/useInsertDish.ts";
 import useRecipes from "@src/repository/useRecipes.ts";
 import { useAppSelector } from "@src/store/store.ts";
 import { GRAMS, MEAL_TIME, PRODUCT_TYPE } from "@src/utils/constants.ts";
+import { calculateMacro } from "@src/utils/functions.ts";
 import useSortedDataByRecord from "@src/utils/hooks/useSortedDataByRecord.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedProduct } from "@src/utils/types.ts";
@@ -61,17 +62,6 @@ function DishForm() {
   const name = watch("name");
   const ingredients = watch("ingredients");
 
-  const calculateMacro = (
-    field: "calories" | "proteins" | "fats" | "carbohydrates" | "saturatedFats" | "sugar" | "fiber" | "salt",
-  ) =>
-    _.round(
-      ingredients.reduce((sum, { product, amount, included }) => {
-        if (!included) return sum;
-        return sum + product[field] * (amount / product.portion);
-      }, 0),
-      field === "calories" ? 0 : 1,
-    );
-
   useEffect(() => {
     const baseRecipe = recipes.find((recipe) => recipe.name === name);
     if (!baseRecipe) return;
@@ -87,16 +77,20 @@ function DishForm() {
   const onSubmit = (data: DishFormData) => {
     insertDish({
       name: data.name,
-      calories: calculateMacro("calories"),
-      proteins: calculateMacro("proteins"),
-      fats: calculateMacro("fats"),
-      saturatedFats: calculateMacro("saturatedFats"),
-      carbohydrates: calculateMacro("carbohydrates"),
-      sugar: calculateMacro("sugar"),
-      fiber: calculateMacro("fiber"),
-      salt: calculateMacro("salt"),
+      calories: calculateMacro("calories", ingredients),
+      proteins: calculateMacro("proteins", ingredients),
+      fats: calculateMacro("fats", ingredients),
+      saturatedFats: calculateMacro("saturatedFats", ingredients),
+      carbohydrates: calculateMacro("carbohydrates", ingredients),
+      sugar: calculateMacro("sugar", ingredients),
+      fiber: calculateMacro("fiber", ingredients),
+      salt: calculateMacro("salt", ingredients),
       vegetables: _.sumBy(
-        ingredients.filter((ingredient) => ingredient.product.type === PRODUCT_TYPE.vegetable),
+        ingredients.filter(
+          (ingredient) =>
+            ingredient.included &&
+            (ingredient.product.type === PRODUCT_TYPE.fruit || ingredient.product.type === PRODUCT_TYPE.vegetable),
+        ),
         "amount",
       ),
       ingredients: ingredients
@@ -125,10 +119,10 @@ function DishForm() {
 
       {name ? (
         <MacroTable
-          calories={calculateMacro("calories")}
-          proteins={calculateMacro("proteins")}
-          fats={calculateMacro("fats")}
-          carbohydrates={calculateMacro("carbohydrates")}
+          calories={calculateMacro("calories", ingredients)}
+          proteins={calculateMacro("proteins", ingredients)}
+          fats={calculateMacro("fats", ingredients)}
+          carbohydrates={calculateMacro("carbohydrates", ingredients)}
         />
       ) : null}
 

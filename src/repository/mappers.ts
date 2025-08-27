@@ -1,15 +1,12 @@
-import { HUNDRED } from "@src/utils/constants.ts";
 import { Tables } from "@src/utils/database.types.ts";
-import { calculateCaloriesFromProduct } from "@src/utils/functions.ts";
+import { calculateCaloriesFromProduct, calculateMacro } from "@src/utils/functions.ts";
 import { MappedDish, MappedProduct, MappedRecipe } from "@src/utils/types.ts";
 import _ from "lodash";
 
 export const mapProduct = (product: Tables<"products">): MappedProduct => {
-  const calories = calculateCaloriesFromProduct(product);
   return {
     ...product,
-    calories: calories * (product.portion / HUNDRED),
-    caloriesPer100g: calories,
+    calories: calculateCaloriesFromProduct(product),
   };
 };
 
@@ -21,19 +18,19 @@ export const mapRecipe = (
     product: mapProduct(recipe_product.products),
   }));
 
-  const calculateMacro = (field: "calories" | "proteins" | "fats" | "carbohydrates") =>
-    ingredients.reduce((sum, ingredient) => {
-      if (!ingredient.defaultIncluded) return sum;
-      return sum + ingredient.product[field] * (ingredient.amount / ingredient.product.portion);
-    }, 0);
+  const ingredientForMacro = ingredients.map(({ product, amount, defaultIncluded }) => ({
+    product,
+    amount,
+    included: defaultIncluded,
+  }));
 
   return {
     ...recipe,
     ingredients,
-    calories: calculateMacro("calories"),
-    proteins: calculateMacro("proteins"),
-    fats: calculateMacro("fats"),
-    carbohydrates: calculateMacro("carbohydrates"),
+    calories: calculateMacro("calories", ingredientForMacro),
+    proteins: calculateMacro("proteins", ingredientForMacro),
+    fats: calculateMacro("fats", ingredientForMacro),
+    carbohydrates: calculateMacro("carbohydrates", ingredientForMacro),
   };
 };
 
