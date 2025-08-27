@@ -30,24 +30,11 @@ function ProductForm() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { productToEdit } = useAppSelector((state) => state.global);
-  const { control, watch, handleSubmit } = useForm<ProductFormData>({
-    defaultValues: productToEdit
-      ? {
-          name: productToEdit.name,
-          proteins: productToEdit.proteins,
-          fats: productToEdit.fats,
-          saturatedFats: productToEdit.saturatedFats,
-          carbohydrates: productToEdit.carbohydrates,
-          sugar: productToEdit.sugar,
-          fiber: productToEdit.fiber,
-          salt: productToEdit.salt,
-          portion: productToEdit.portion,
-          type: productToEdit.type,
-        }
-      : {
-          name: "",
-          type: PRODUCT_TYPE.proteins,
-        },
+  const { control, watch, setValue, handleSubmit } = useForm<ProductFormData>({
+    defaultValues: {
+      name: "",
+      type: PRODUCT_TYPE.proteins,
+    },
   });
   const { mutate: upsertProduct } = useUpsertProduct({ onSuccess: () => navigate(routes.productList) });
   const caloriesPer100g = calculateCalories(watch("proteins"), watch("fats"), watch("carbohydrates"));
@@ -58,8 +45,21 @@ function ProductForm() {
   };
 
   useEffect(() => {
-    if (!productToEdit) navigate(routes.productForm);
-  }, [navigate, productToEdit]);
+    if (!productToEdit) {
+      navigate(routes.productForm);
+      return;
+    }
+    setValue("name", productToEdit.name);
+    setValue("proteins", productToEdit.proteins);
+    setValue("fats", productToEdit.fats);
+    setValue("saturatedFats", productToEdit.saturatedFats);
+    setValue("carbohydrates", productToEdit.carbohydrates);
+    setValue("sugar", productToEdit.sugar);
+    setValue("fiber", productToEdit.fiber);
+    setValue("salt", productToEdit.salt);
+    setValue("portion", productToEdit.portion);
+    setValue("type", productToEdit.type);
+  }, [navigate, setValue, productToEdit]);
 
   return (
     <Stack component="form" spacing={2} sx={{ p: 3, height: "100%" }} onSubmit={handleSubmit(onSubmit)}>
