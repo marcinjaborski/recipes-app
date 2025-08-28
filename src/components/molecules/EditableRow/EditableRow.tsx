@@ -1,12 +1,12 @@
 import { Menu, MenuItem, PopoverPosition, TableCell, TableRow } from "@mui/material";
 import _ from "lodash";
-import { PointerEvent, useCallback, useRef, useState } from "react";
+import { PointerEvent, ReactNode, useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LongPressReactEvents, useLongPress } from "use-long-press";
 
 type EditableRowProps<T extends string> = {
   columns: T[];
-  data: Record<T, string | number>;
+  data: Record<T, string | number | ReactNode>;
   onEdit: () => void;
   onDelete: () => void;
 };
@@ -43,7 +43,11 @@ function EditableRow<T extends string>({ columns, data, onEdit, onDelete }: Edit
     <>
       <TableRow ref={rowRef} {...bind()} hover={holding}>
         {columns.map((columnName) => (
-          <TableCell key={columnName} align={typeof data[columnName] === "number" ? "right" : "inherit"}>
+          <TableCell
+            key={columnName}
+            align={typeof data[columnName] === "number" ? "right" : "inherit"}
+            sx={{ position: "relative", "&>svg": { position: "absolute", top: "50%", translate: "0 -50%" } }}
+          >
             {typeof data[columnName] === "number" ? _.round(data[columnName], 1) : data[columnName]}
           </TableCell>
         ))}

@@ -21,6 +21,7 @@ const resource = {
   ProductList: {
     macroPerPortion: "Makro na porcję",
     name: "Nazwa",
+    tag: "",
     calories: "kcal",
     proteins: "B",
     fats: "T",
@@ -40,6 +41,9 @@ const resource = {
     fruit: "Owoc",
     vegetable: "Warzywo",
     spice: "Przyprawa",
+    tag: "Tag",
+    none: "Brak",
+    vegan: "Weganskie",
   },
   RecipeList: {
     search: "Szukaj",

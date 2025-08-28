@@ -15,6 +15,12 @@ export const MEAL_TIME = {
   snack: "snack",
 } as const;
 
+export const TAG = {
+  vegan: "vegan",
+  fish: "fish",
+  none: null,
+} as const;
+
 export const GRAMS = "g";
 export const HUNDRED = 100;
 

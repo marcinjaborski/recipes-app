@@ -16,7 +16,7 @@ export const includesString = (string: string, substring: string) => {
 };
 
 export const calculateMacro = (
-  field: Exclude<keyof MappedProduct, "id" | "name" | "created_at" | "type">,
+  field: Exclude<keyof MappedProduct, "id" | "name" | "created_at" | "type" | "tag">,
   ingredients: { product: MappedProduct; amount: number; included: boolean }[],
 ) => {
   const value = ingredients.reduce((sum, ingredient) => {

@@ -1,16 +1,18 @@
-import { Box, Button, ListItemText, MenuItem, Stack, Typography } from "@mui/material";
+import { Box, Button, ListItemText, MenuItem, Stack, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import ControlledNumberField from "@src/components/atoms/ControlledNumberField";
 import ControlledTextField from "@src/components/atoms/ControlledTextField";
+import FishIcon from "@src/components/atoms/FishIcon";
+import VeganIcon from "@src/components/atoms/VeganIcon";
 import useProducts from "@src/repository/useProducts.ts";
 import useUpsertProduct from "@src/repository/useUpsertProduct.ts";
 import { setProductIdToEdit } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
-import { GRAMS, HUNDRED, PRODUCT_TYPE } from "@src/utils/constants.ts";
+import { GRAMS, HUNDRED, PRODUCT_TYPE, TAG } from "@src/utils/constants.ts";
 import { calculateCalories } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
 import _ from "lodash";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -25,6 +27,7 @@ export type ProductFormData = {
   salt: number;
   portion: number;
   type: string;
+  tag: (typeof TAG)[keyof typeof TAG];
 };
 
 function ProductForm() {
@@ -63,6 +66,7 @@ function ProductForm() {
     setValue("salt", productToEdit.salt);
     setValue("portion", productToEdit.portion);
     setValue("type", productToEdit.type);
+    setValue("tag", productToEdit.tag);
   }, [navigate, setValue, productToEdit]);
 
   return (
@@ -75,13 +79,34 @@ function ProductForm() {
           </MenuItem>
         ))}
       </ControlledTextField>
-      <ControlledNumberField
-        control={control}
-        name="portion"
-        label={t("Shared:portion")}
-        suffix={GRAMS}
-        rules={{ required: true }}
-      />
+      <Stack direction="row" spacing={2}>
+        <ControlledNumberField
+          control={control}
+          name="portion"
+          label={t("Shared:portion")}
+          suffix={GRAMS}
+          rules={{ required: true }}
+        />
+        <Controller
+          control={control}
+          name="tag"
+          render={({ field }) => (
+            <ToggleButtonGroup
+              value={field.value}
+              exclusive
+              onChange={(_, value) => field.onChange(value)}
+              color="primary"
+            >
+              <ToggleButton value={TAG.vegan}>
+                <VeganIcon />
+              </ToggleButton>
+              <ToggleButton value={TAG.fish}>
+                <FishIcon />
+              </ToggleButton>
+            </ToggleButtonGroup>
+          )}
+        />
+      </Stack>
       <Typography>{t("calories", { calories: caloriesPer100g, caloriesPerPortion })}</Typography>
       <ControlledNumberField
         control={control}
