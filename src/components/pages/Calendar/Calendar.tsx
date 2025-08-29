@@ -24,7 +24,7 @@ import {
   PRODUCT_TYPE,
 } from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
-import { calculateMacro } from "@src/utils/functions.ts";
+import { calculateMacro, getTagFromProducts } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
 import _ from "lodash";
 import { DateTime } from "luxon";
@@ -133,6 +133,7 @@ function Calendar() {
             vegetables: product.type === PRODUCT_TYPE.fruit || product.type === PRODUCT_TYPE.vegetable ? amount : 0,
             date,
             mealTime: addSingleProductDialogOpen,
+            tag: getTagFromProducts([product]),
           });
         }}
       />

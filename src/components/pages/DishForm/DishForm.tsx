@@ -18,7 +18,7 @@ import useInsertDish from "@src/repository/useInsertDish.ts";
 import useRecipes from "@src/repository/useRecipes.ts";
 import { useAppSelector } from "@src/store/store.ts";
 import { GRAMS, MEAL_TIME, PRODUCT_TYPE } from "@src/utils/constants.ts";
-import { calculateMacro } from "@src/utils/functions.ts";
+import { calculateMacro, getTagFromProducts } from "@src/utils/functions.ts";
 import useSortedDataByRecord from "@src/utils/hooks/useSortedDataByRecord.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedProduct } from "@src/utils/types.ts";
@@ -98,6 +98,7 @@ function DishForm() {
         .map(({ product, amount }) => ({ product: product.name, amount })),
       date,
       mealTime,
+      tag: getTagFromProducts(ingredients.map(({ product }) => product)),
     });
   };
 

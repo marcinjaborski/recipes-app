@@ -19,6 +19,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import TagIcon from "@src/components/atoms/TagIcon";
 import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
 import { setDishToDeleteId } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch } from "@src/store/store.ts";
@@ -82,15 +83,18 @@ function MealTimeSection({
         {dishes.map((dish) => (
           <ListItem
             key={dish.id}
+            sx={{ gap: 1 }}
             secondaryAction={
               <IconButton edge="end" onClick={() => dispatch(setDishToDeleteId(dish.id))}>
                 <DeleteIcon />
               </IconButton>
             }
           >
-            {dish.name}{" "}
+            {dish.name}
+            <TagIcon tag={dish.tag} />
             {dish.ingredients.length ? (
               <IconButton
+                sx={{ p: 0 }}
                 onClick={() => {
                   setIngredientDialogOpen(true);
                   setSelectedProductName(dish.name);
