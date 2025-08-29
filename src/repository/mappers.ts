@@ -1,5 +1,5 @@
 import { Tables } from "@src/utils/database.types.ts";
-import { calculateCaloriesFromProduct, calculateMacro } from "@src/utils/functions.ts";
+import { calculateCaloriesFromProduct, calculateMacro, getTagFromProducts } from "@src/utils/functions.ts";
 import { MappedDish, MappedProduct, MappedRecipe } from "@src/utils/types.ts";
 import _ from "lodash";
 
@@ -31,6 +31,7 @@ export const mapRecipe = (
     proteins: calculateMacro("proteins", ingredientForMacro),
     fats: calculateMacro("fats", ingredientForMacro),
     carbohydrates: calculateMacro("carbohydrates", ingredientForMacro),
+    tag: getTagFromProducts(ingredients.map(({ product }) => product)),
   };
 };
 

@@ -1,6 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import { MenuItem, Paper, Stack, Table, TableBody, TableContainer, TextField } from "@mui/material";
 import BottomFab from "@src/components/atoms/BottomFab";
+import TagIcon from "@src/components/atoms/TagIcon";
 import EditableRow from "@src/components/molecules/EditableRow";
 import SortableHead from "@src/components/molecules/SortableHead";
 import ConfirmDialog from "@src/components/organisms/ConfirmDialog";
@@ -19,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 
 const COLUMNS = [
   "name",
+  "tag",
   "calories",
   "proteins",
   "fats",
@@ -79,7 +81,11 @@ function RecipeList() {
               <EditableRow
                 key={recipe.id}
                 columns={COLUMNS}
-                data={{ ...recipe, recommendedMealTime: t(`RecipeForm:${recipe.recommendedMealTime}`) }}
+                data={{
+                  ...recipe,
+                  tag: <TagIcon tag={recipe.tag} />,
+                  recommendedMealTime: t(`RecipeForm:${recipe.recommendedMealTime}`),
+                }}
                 onEdit={() => {
                   dispatch(setRecipeToEdit(recipe));
                   navigate(routes.recipesFormUpdate);

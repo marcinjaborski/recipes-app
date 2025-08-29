@@ -48,6 +48,7 @@ const resource = {
   RecipeList: {
     search: "Szukaj",
     name: "Nazwa",
+    tag: "",
     calories: "kcal",
     proteins: "B",
     fats: "T",

@@ -11,8 +11,7 @@ import {
   TextField,
 } from "@mui/material";
 import BottomFab from "@src/components/atoms/BottomFab";
-import FishIcon from "@src/components/atoms/FishIcon";
-import VeganIcon from "@src/components/atoms/VeganIcon";
+import TagIcon from "@src/components/atoms/TagIcon";
 import EditableRow from "@src/components/molecules/EditableRow";
 import SortableHead from "@src/components/molecules/SortableHead";
 import ConfirmDialog from "@src/components/organisms/ConfirmDialog";
@@ -20,7 +19,7 @@ import useDelete from "@src/repository/useDelete.ts";
 import useProducts from "@src/repository/useProducts.ts";
 import { setProductIdToEdit, setProductToDeleteId } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
-import { HUNDRED, PRODUCT_TYPE, TAG } from "@src/utils/constants.ts";
+import { HUNDRED, PRODUCT_TYPE } from "@src/utils/constants.ts";
 import { includesString } from "@src/utils/functions.ts";
 import useSortedData from "@src/utils/hooks/useSortedData.ts";
 import routes from "@src/utils/routes.ts";
@@ -109,7 +108,7 @@ function ProductList() {
                 columns={COLUMNS}
                 data={{
                   ...product,
-                  tag: product.tag === TAG.vegan ? <VeganIcon /> : product.tag === TAG.fish ? <FishIcon /> : null,
+                  tag: <TagIcon tag={product.tag} />,
                   type: t(`ProductForm:${product.type as "proteins"}`),
                 }}
                 onEdit={() => {

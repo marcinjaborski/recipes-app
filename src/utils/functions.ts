@@ -1,4 +1,4 @@
-import { HUNDRED } from "@src/utils/constants.ts";
+import { HUNDRED, TAG } from "@src/utils/constants.ts";
 import { Tables } from "@src/utils/database.types.ts";
 import { MappedProduct } from "@src/utils/types.ts";
 import _ from "lodash";
@@ -24,4 +24,10 @@ export const calculateMacro = (
     return sum + (ingredient.product[field] * ingredient.amount) / HUNDRED;
   }, 0);
   return _.round(value, field.includes("calories") ? 0 : field === "salt" ? 2 : 1);
+};
+
+export const getTagFromProducts = (products: MappedProduct[]) => {
+  if (products.some((product) => product.tag === TAG.fish)) return TAG.fish;
+  if (products.some((product) => product.tag === TAG.none)) return TAG.none;
+  return TAG.vegan;
 };

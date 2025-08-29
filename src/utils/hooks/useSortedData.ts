@@ -15,6 +15,7 @@ function useSortedData<T>(data: T[], initialSortBy: keyof T) {
       }
       if (typeof a[sortBy] === "string" && typeof b[sortBy] === "string") return a[sortBy].localeCompare(b[sortBy]);
       if (typeof a[sortBy] === "number" && typeof b[sortBy] === "number") return a[sortBy] - b[sortBy];
+      if (b[sortBy] === null) return -1;
       return 0;
     });
     return products;
