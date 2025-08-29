@@ -70,7 +70,7 @@ function ProductForm() {
   }, [navigate, setValue, productToEdit]);
 
   return (
-    <Stack component="form" spacing={2} sx={{ p: 3, height: "100%" }} onSubmit={handleSubmit(onSubmit)}>
+    <Stack component="form" spacing={2} sx={{ p: 3, minHeight: "100%" }} onSubmit={handleSubmit(onSubmit)}>
       <ControlledTextField control={control} name="name" label={t("name")} rules={{ required: true }} />
       <ControlledTextField select control={control} name="type" label={t("type")}>
         {Object.values(PRODUCT_TYPE).map((type) => (

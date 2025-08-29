@@ -105,7 +105,7 @@ function DishForm() {
   };
 
   return (
-    <Stack component="form" spacing={2} sx={{ p: 3, height: "100%" }} onSubmit={handleSubmit(onSubmit)}>
+    <Stack component="form" spacing={2} sx={{ p: 3, minHeight: "100%" }} onSubmit={handleSubmit(onSubmit)}>
       <Controller
         control={control}
         name="name"

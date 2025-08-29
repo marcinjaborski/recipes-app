@@ -69,7 +69,7 @@ function RecipeForm() {
   }));
 
   return (
-    <Stack component="form" spacing={2} sx={{ p: 3, height: "100%" }} onSubmit={handleSubmit(onSubmit)}>
+    <Stack component="form" spacing={2} sx={{ p: 3, minHeight: "100%" }} onSubmit={handleSubmit(onSubmit)}>
       <ControlledTextField control={control} name="name" label={t("name")} rules={{ required: true }} />
       <ControlledTextField multiline control={control} name="instruction" label={t("instruction")} />
       <ControlledTextField
