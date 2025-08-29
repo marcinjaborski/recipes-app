@@ -22,6 +22,8 @@ export const TAG = {
 } as const;
 
 export const GRAMS = "g";
+export const MULTIPLIER = "x";
+export const DEFAULT_MULTIPLIER = 1;
 export const HUNDRED = 100;
 
 export const DAILY_CALORIES = 2000;

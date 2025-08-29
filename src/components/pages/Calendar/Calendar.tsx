@@ -117,9 +117,9 @@ function Calendar() {
       <ProductDialog
         open={addSingleProductDialogOpen !== false}
         setOpen={(value) => !value && setAddSingleProductDialogOpen(value)}
-        onAdd={(product, amount) => {
+        onAdd={(product, amount, multiplier) => {
           if (!addSingleProductDialogOpen) return;
-          const productForMacro = [{ product, amount, included: true }];
+          const productForMacro = [{ product, amount, multiplier, included: true }];
           insertDish({
             name: product.name,
             calories: calculateMacro("calories", productForMacro),
@@ -130,7 +130,8 @@ function Calendar() {
             sugar: calculateMacro("sugar", productForMacro),
             fiber: calculateMacro("fiber", productForMacro),
             salt: calculateMacro("salt", productForMacro),
-            vegetables: product.type === PRODUCT_TYPE.fruit || product.type === PRODUCT_TYPE.vegetable ? amount : 0,
+            vegetables:
+              product.type === PRODUCT_TYPE.fruit || product.type === PRODUCT_TYPE.vegetable ? amount * multiplier : 0,
             date,
             mealTime: addSingleProductDialogOpen,
             tag: getTagFromProducts([product]),

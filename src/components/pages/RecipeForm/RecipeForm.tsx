@@ -7,7 +7,7 @@ import ProductDialog from "@src/components/organisms/ProductDialog";
 import useUpsertRecipe from "@src/repository/useUpsertRecipe.ts";
 import { setRecipeToEdit } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
-import { GRAMS, MEAL_TIME } from "@src/utils/constants.ts";
+import { GRAMS, MEAL_TIME, MULTIPLIER } from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
 import { calculateMacro } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
@@ -23,7 +23,7 @@ export type RecipeFormData = {
   recommendedMealTime: Enums<"mealTime">;
 };
 
-export type IngredientFormData = [MappedProduct, number, boolean];
+export type IngredientFormData = [MappedProduct, number, number, boolean];
 
 function RecipeForm() {
   const { t } = useTranslation(["RecipeForm", "Shared"]);
@@ -36,6 +36,7 @@ function RecipeForm() {
       : recipeToEdit.ingredients.map((ingredient) => [
           ingredient.product,
           ingredient.amount,
+          ingredient.multiplier,
           ingredient.defaultIncluded,
         ]),
   );
@@ -60,7 +61,12 @@ function RecipeForm() {
     dispatch(setRecipeToEdit(null));
   };
 
-  const ingredientsForMacro = ingredients.map(([product, amount, included]) => ({ product, amount, included }));
+  const ingredientsForMacro = ingredients.map(([product, amount, multiplier, included]) => ({
+    product,
+    amount,
+    multiplier,
+    included,
+  }));
 
   return (
     <Stack component="form" spacing={2} sx={{ p: 3, height: "100%" }} onSubmit={handleSubmit(onSubmit)}>
@@ -94,7 +100,7 @@ function RecipeForm() {
               <ListItemText primary={t("noIngredients")} secondary="&nbsp;" />
             </ListItem>
           ) : null}
-          {ingredients.map(([ingredient, portion, defaultIncluded], index) => (
+          {ingredients.map(([ingredient, portion, multiplier, defaultIncluded], index) => (
             <ListItem
               key={ingredient.name}
               secondaryAction={
@@ -113,7 +119,7 @@ function RecipeForm() {
               }
               sx={{ fontStyle: !defaultIncluded ? "italic" : null, color: !defaultIncluded ? "gray" : null }}
             >
-              <ListItemText primary={ingredient.name} secondary={`${portion}${GRAMS}`} />
+              <ListItemText primary={ingredient.name} secondary={`${multiplier}${MULTIPLIER} ${portion}${GRAMS}`} />
             </ListItem>
           ))}
         </List>
@@ -135,8 +141,8 @@ function RecipeForm() {
         setOpen={setIngredientDialogOpen}
         includedCheckbox
         checkboxLabel={t("defaultIncluded")}
-        onAdd={(product, amount, included) => {
-          setIngredients((prevState) => [...prevState, [product, amount, included]]);
+        onAdd={(product, amount, multiplier, included) => {
+          setIngredients((prevState) => [...prevState, [product, amount, multiplier, included]]);
         }}
       />
     </Stack>

@@ -18,9 +18,10 @@ export const mapRecipe = (
     product: mapProduct(recipe_product.products),
   }));
 
-  const ingredientForMacro = ingredients.map(({ product, amount, defaultIncluded }) => ({
+  const ingredientForMacro = ingredients.map(({ product, amount, multiplier, defaultIncluded }) => ({
     product,
     amount,
+    multiplier,
     included: defaultIncluded,
   }));
 

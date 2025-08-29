@@ -12,10 +12,11 @@ function useUpsertRecipe(options?: { onSuccess: () => void }) {
       const response = await supabase.from("recipes").upsert(data).select().single().throwOnError();
       await supabase.from("recipes_products").delete().eq("recipe_id", response.data.id);
       await supabase.from("recipes_products").insert(
-        ingredients.map(([ingredient, portion, defaultIncluded]) => ({
+        ingredients.map(([ingredient, amount, multiplier, defaultIncluded]) => ({
           product_id: ingredient.id,
           recipe_id: response.data.id,
-          amount: portion,
+          amount,
+          multiplier,
           defaultIncluded,
         })),
       );

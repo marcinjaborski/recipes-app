@@ -17,7 +17,7 @@ import ProductDialog from "@src/components/organisms/ProductDialog";
 import useInsertDish from "@src/repository/useInsertDish.ts";
 import useRecipes from "@src/repository/useRecipes.ts";
 import { useAppSelector } from "@src/store/store.ts";
-import { GRAMS, MEAL_TIME, PRODUCT_TYPE } from "@src/utils/constants.ts";
+import { GRAMS, MEAL_TIME, MULTIPLIER, PRODUCT_TYPE } from "@src/utils/constants.ts";
 import { calculateMacro, getTagFromProducts } from "@src/utils/functions.ts";
 import useSortedDataByRecord from "@src/utils/hooks/useSortedDataByRecord.ts";
 import routes from "@src/utils/routes.ts";
@@ -32,6 +32,7 @@ import { useNavigate } from "react-router-dom";
 type IngredientData = {
   product: MappedProduct;
   amount: number;
+  multiplier: number;
   included: boolean;
 };
 
@@ -69,6 +70,7 @@ function DishForm() {
       baseRecipe.ingredients.map((ingredient) => ({
         product: ingredient.product,
         amount: ingredient.amount,
+        multiplier: ingredient.multiplier,
         included: ingredient.defaultIncluded,
       })),
     );
@@ -95,7 +97,7 @@ function DishForm() {
       ),
       ingredients: ingredients
         .filter(({ included }) => included)
-        .map(({ product, amount }) => ({ product: product.name, amount })),
+        .map(({ product, amount, multiplier }) => ({ product: product.name, amount: amount * multiplier })),
       date,
       mealTime,
       tag: getTagFromProducts(ingredients.map(({ product }) => product)),
@@ -142,20 +144,36 @@ function DishForm() {
               />
             </ListItemIcon>
             <ListItemText primary={field.product.name} />
-            <Controller
-              control={control}
-              name={`ingredients.${index}.amount` as const}
-              render={({ field: { value, onChange } }) => (
-                <NumericFormat
-                  customInput={TextField}
-                  variant="standard"
-                  suffix={GRAMS}
-                  sx={{ width: 50 }}
-                  value={value}
-                  onValueChange={({ floatValue }) => onChange(floatValue || "")}
-                />
-              )}
-            />
+            <Stack direction="row" sx={{ gap: 1 }}>
+              <Controller
+                control={control}
+                name={`ingredients.${index}.multiplier` as const}
+                render={({ field: { value, onChange } }) => (
+                  <NumericFormat
+                    customInput={TextField}
+                    variant="standard"
+                    suffix={MULTIPLIER}
+                    sx={{ width: 40 }}
+                    value={value}
+                    onValueChange={({ floatValue }) => onChange(floatValue || "")}
+                  />
+                )}
+              />
+              <Controller
+                control={control}
+                name={`ingredients.${index}.amount` as const}
+                render={({ field: { value, onChange } }) => (
+                  <NumericFormat
+                    customInput={TextField}
+                    variant="standard"
+                    suffix={GRAMS}
+                    sx={{ width: 50 }}
+                    value={value}
+                    onValueChange={({ floatValue }) => onChange(floatValue || "")}
+                  />
+                )}
+              />
+            </Stack>
           </ListItem>
         ))}
         {name ? (
@@ -176,7 +194,7 @@ function DishForm() {
       <ProductDialog
         open={addIngredientDialogOpen}
         setOpen={setAddIngredientDialogOpen}
-        onAdd={(product, amount) => append({ product, amount, included: true })}
+        onAdd={(product, amount, multiplier) => append({ product, amount, multiplier, included: true })}
         filterProducts={(p) => !fields.find(({ product }) => product.id === p.id)}
       />
     </Stack>

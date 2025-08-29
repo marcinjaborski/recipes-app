@@ -17,11 +17,11 @@ export const includesString = (string: string, substring: string) => {
 
 export const calculateMacro = (
   field: Exclude<keyof MappedProduct, "id" | "name" | "created_at" | "type" | "tag">,
-  ingredients: { product: MappedProduct; amount: number; included: boolean }[],
+  ingredients: { product: MappedProduct; amount: number; multiplier: number; included: boolean }[],
 ) => {
   const value = ingredients.reduce((sum, ingredient) => {
     if (!ingredient.included) return sum;
-    return sum + (ingredient.product[field] * ingredient.amount) / HUNDRED;
+    return sum + (ingredient.product[field] * ingredient.amount * ingredient.multiplier) / HUNDRED;
   }, 0);
   return _.round(value, field.includes("calories") ? 0 : field === "salt" ? 2 : 1);
 };

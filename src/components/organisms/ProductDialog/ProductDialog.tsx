@@ -11,7 +11,7 @@ import {
   TextField,
 } from "@mui/material";
 import useProducts from "@src/repository/useProducts.ts";
-import { GRAMS, PRODUCT_TYPE } from "@src/utils/constants.ts";
+import { DEFAULT_MULTIPLIER, GRAMS, MULTIPLIER, PRODUCT_TYPE } from "@src/utils/constants.ts";
 import useSortedDataByRecord from "@src/utils/hooks/useSortedDataByRecord.ts";
 import { MappedProduct } from "@src/utils/types.ts";
 import { useState } from "react";
@@ -21,7 +21,7 @@ import { NumericFormat } from "react-number-format";
 type ProductDialogProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
-  onAdd: (product: MappedProduct, amount: number, included: boolean) => void;
+  onAdd: (product: MappedProduct, amount: number, multiplier: number, included: boolean) => void;
   filterProducts?: (product: MappedProduct) => boolean;
   includedCheckbox?: boolean;
   checkboxLabel?: string;
@@ -39,6 +39,7 @@ function ProductDialog({
   const { data: products } = useProducts();
   const sortedProducts = useSortedDataByRecord(products, "type", PRODUCT_TYPE);
   const [productName, setProductName] = useState("");
+  const [multiplier, setMultiplier] = useState<number | undefined>(DEFAULT_MULTIPLIER);
   const [amount, setAmount] = useState<number | undefined>();
   const [included, setIncluded] = useState(true);
 
@@ -57,14 +58,23 @@ function ProductDialog({
             renderInput={(params) => <TextField {...params} label={t("product")} />}
             options={sortedProducts.filter(filterProducts).map((product) => product.name)}
           />
-          <NumericFormat
-            customInput={TextField}
-            suffix={GRAMS}
-            fullWidth
-            label={t("amount")}
-            value={amount}
-            onValueChange={({ floatValue }) => setAmount(floatValue)}
-          />
+          <Stack direction="row" sx={{ gap: 2 }}>
+            <NumericFormat
+              customInput={TextField}
+              suffix={MULTIPLIER}
+              sx={{ width: 90 }}
+              value={multiplier}
+              onValueChange={({ floatValue }) => setMultiplier(floatValue)}
+            />
+            <NumericFormat
+              customInput={TextField}
+              suffix={GRAMS}
+              fullWidth
+              label={t("amount")}
+              value={amount}
+              onValueChange={({ floatValue }) => setAmount(floatValue)}
+            />
+          </Stack>
           {includedCheckbox ? (
             <FormControlLabel
               label={checkboxLabel}
@@ -77,10 +87,11 @@ function ProductDialog({
         <Button
           onClick={() => {
             const product = products.find((product) => product.name === productName);
-            if (!product || !amount) return;
-            onAdd(product, amount, included);
+            if (!product || !amount || !multiplier) return;
+            onAdd(product, amount, multiplier, included);
             setOpen(false);
             setProductName("");
+            setMultiplier(1);
             setAmount(undefined);
             setIncluded(true);
           }}
