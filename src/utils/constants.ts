@@ -26,11 +26,11 @@ export const MULTIPLIER = "x";
 export const DEFAULT_MULTIPLIER = 1;
 export const HUNDRED = 100;
 
-export const DAILY_CALORIES = 2000;
-export const DAILY_PROTEINS = 130;
-export const DAILY_FATS = 64;
-export const DAILY_SATURATED_FATS = 22;
-export const DAILY_CARBOHYDRATES = 225;
+export const DAILY_CALORIES = 2250;
+export const DAILY_PROTEINS = 150;
+export const DAILY_FATS = 75;
+export const DAILY_SATURATED_FATS = 25;
+export const DAILY_CARBOHYDRATES = 244;
 export const DAILY_SUGAR = 25;
 export const DAILY_FIBER = 30;
 export const DAILY_SALT = 5;
