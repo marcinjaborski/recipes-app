@@ -24,7 +24,11 @@ const COLUMNS = [
   "calories",
   "proteins",
   "fats",
+  "saturatedFats",
   "carbohydrates",
+  "sugar",
+  "fiber",
+  "salt",
   "recommendedMealTime",
 ] satisfies (keyof MappedRecipe)[];
 

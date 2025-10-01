@@ -101,6 +101,12 @@ function RecipeForm() {
         proteins={calculateMacro("proteins", ingredientsForMacro)}
         fats={calculateMacro("fats", ingredientsForMacro)}
         carbohydrates={calculateMacro("carbohydrates", ingredientsForMacro)}
+        extra={{
+          saturatedFats: calculateMacro("saturatedFats", ingredientsForMacro),
+          sugar: calculateMacro("sugar", ingredientsForMacro),
+          fiber: calculateMacro("fiber", ingredientsForMacro),
+          salt: calculateMacro("salt", ingredientsForMacro),
+        }}
       />
 
       <DndContext onDragEnd={onDragEnd}>

@@ -66,7 +66,6 @@ function DishForm() {
   useEffect(() => {
     const baseRecipe = recipes.find((recipe) => recipe.name === name);
     if (!baseRecipe) return;
-    console.log(baseRecipe.ingredients);
     replace(
       baseRecipe.ingredients.map((ingredient) => ({
         product: ingredient.product,
@@ -127,6 +126,12 @@ function DishForm() {
           proteins={calculateMacro("proteins", ingredients)}
           fats={calculateMacro("fats", ingredients)}
           carbohydrates={calculateMacro("carbohydrates", ingredients)}
+          extra={{
+            saturatedFats: calculateMacro("saturatedFats", ingredients),
+            sugar: calculateMacro("sugar", ingredients),
+            fiber: calculateMacro("fiber", ingredients),
+            salt: calculateMacro("salt", ingredients),
+          }}
         />
       ) : null}
 

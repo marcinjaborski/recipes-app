@@ -71,14 +71,22 @@ function MealTimeSection({
           </IconButton>
         </Stack>
       </Stack>
-      <Box sx={{ color: "gray" }}>
-        <MacroTable
-          calories={_.sumBy(dishes, "calories")}
-          proteins={_.sumBy(dishes, "proteins")}
-          fats={_.sumBy(dishes, "fats")}
-          carbohydrates={_.sumBy(dishes, "carbohydrates")}
-        />
-      </Box>
+      {dishes?.length ? (
+        <Box sx={{ color: "gray" }}>
+          <MacroTable
+            calories={_.sumBy(dishes, "calories")}
+            proteins={_.sumBy(dishes, "proteins")}
+            fats={_.sumBy(dishes, "fats")}
+            carbohydrates={_.sumBy(dishes, "carbohydrates")}
+            extra={{
+              saturatedFats: _.sumBy(dishes, "saturatedFats"),
+              sugar: _.sumBy(dishes, "sugar"),
+              fiber: _.sumBy(dishes, "fiber"),
+              salt: _.sumBy(dishes, "salt"),
+            }}
+          />
+        </Box>
+      ) : null}
       <List>
         {dishes.map((dish) => (
           <ListItem

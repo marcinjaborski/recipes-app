@@ -34,7 +34,11 @@ const COLUMNS = [
   "calories",
   "proteins",
   "fats",
+  "saturatedFats",
   "carbohydrates",
+  "sugar",
+  "fiber",
+  "salt",
   "portion",
   "type",
 ] satisfies (keyof MappedProduct)[];
@@ -62,7 +66,11 @@ function ProductList() {
       calories: product.calories * portionMultiplier,
       proteins: product.proteins * portionMultiplier,
       fats: product.fats * portionMultiplier,
+      saturatedFats: product.saturatedFats * portionMultiplier,
       carbohydrates: product.carbohydrates * portionMultiplier,
+      sugar: product.sugar * portionMultiplier,
+      fiber: product.fiber * portionMultiplier,
+      salt: product.salt * portionMultiplier,
     };
   });
   const { sortedData: sortedProducts, sortBy, setSortBy, sortDir, setSortDir } = useSortedData(mappedProducts, "name");

@@ -15,7 +15,11 @@ export type MappedRecipe = Tables<"recipes"> & {
   calories: number;
   proteins: number;
   fats: number;
+  saturatedFats: number;
   carbohydrates: number;
+  sugar: number;
+  fiber: number;
+  salt: number;
   tag: Database["public"]["Enums"]["tag"] | null;
 };
 

@@ -31,7 +31,11 @@ export const mapRecipe = (
     calories: calculateMacro("calories", ingredientForMacro),
     proteins: calculateMacro("proteins", ingredientForMacro),
     fats: calculateMacro("fats", ingredientForMacro),
+    saturatedFats: calculateMacro("saturatedFats", ingredientForMacro),
     carbohydrates: calculateMacro("carbohydrates", ingredientForMacro),
+    sugar: calculateMacro("sugar", ingredientForMacro),
+    fiber: calculateMacro("fiber", ingredientForMacro),
+    salt: calculateMacro("salt", ingredientForMacro),
     tag: getTagFromProducts(ingredients.map(({ product }) => product)),
   };
 };
