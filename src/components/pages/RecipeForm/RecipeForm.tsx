@@ -1,7 +1,10 @@
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, Button, Fab, IconButton, List, ListItem, ListItemText, MenuItem, Stack } from "@mui/material";
 import ControlledTextField from "@src/components/atoms/ControlledTextField";
+import DraggableListItem from "@src/components/molecules/DraggableListItem";
 import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
 import ProductDialog from "@src/components/organisms/ProductDialog";
 import useUpsertRecipe from "@src/repository/useUpsertRecipe.ts";
@@ -56,6 +59,13 @@ function RecipeForm() {
   });
   const { mutate: upsertRecipe } = useUpsertRecipe({ onSuccess: () => navigate(routes.recipesList) });
 
+  const onDragEnd = ({ active, over }: DragEndEvent) => {
+    if (!over || over.id === active.id) return;
+    const oldIndex = ingredients.findIndex((ing) => ing[0].id === active.id);
+    const newIndex = ingredients.findIndex((ing) => ing[0].id === over.id);
+    setIngredients(arrayMove(ingredients, oldIndex, newIndex));
+  };
+
   const onSubmit = async (data: RecipeFormData) => {
     upsertRecipe([recipeToEdit ? { id: recipeToEdit.id, ...data } : data, ingredients]);
     dispatch(setRecipeToEdit(null));
@@ -93,42 +103,51 @@ function RecipeForm() {
         carbohydrates={calculateMacro("carbohydrates", ingredientsForMacro)}
       />
 
-      <Stack direction="row" spacing={2}>
-        <List sx={{ flex: 1 }}>
-          {ingredients.length === 0 ? (
-            <ListItem sx={{ fontStyle: "italic" }}>
-              <ListItemText primary={t("noIngredients")} secondary="&nbsp;" />
-            </ListItem>
-          ) : null}
-          {ingredients.map(([ingredient, portion, multiplier, defaultIncluded], index) => (
-            <ListItem
-              key={ingredient.name}
-              secondaryAction={
-                <IconButton
-                  edge="end"
-                  onClick={() => {
-                    setIngredients((prevState) => {
-                      const copy = [...prevState];
-                      copy.splice(index, 1);
-                      return copy;
-                    });
+      <DndContext onDragEnd={onDragEnd}>
+        <SortableContext items={ingredients.map((ingredient) => ({ id: ingredient[0].id }))}>
+          <Stack direction="row" spacing={2}>
+            <List sx={{ flex: 1 }}>
+              {ingredients.length === 0 ? (
+                <ListItem sx={{ fontStyle: "italic" }}>
+                  <ListItemText primary={t("noIngredients")} secondary="&nbsp;" />
+                </ListItem>
+              ) : null}
+              {ingredients.map(([ingredient, portion, multiplier, defaultIncluded], index) => (
+                <DraggableListItem
+                  key={ingredient.name}
+                  item={{
+                    id: ingredient.id,
+                    primary: ingredient.name,
+                    secondary: `${multiplier}${MULTIPLIER} ${portion}${GRAMS}`,
+                    listItemProps: {
+                      secondaryAction: (
+                        <IconButton
+                          edge="end"
+                          onClick={() => {
+                            setIngredients((prevState) => {
+                              const copy = [...prevState];
+                              copy.splice(index, 1);
+                              return copy;
+                            });
+                          }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      ),
+                      sx: { fontStyle: !defaultIncluded ? "italic" : null, color: !defaultIncluded ? "gray" : null },
+                    },
                   }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              }
-              sx={{ fontStyle: !defaultIncluded ? "italic" : null, color: !defaultIncluded ? "gray" : null }}
-            >
-              <ListItemText primary={ingredient.name} secondary={`${multiplier}${MULTIPLIER} ${portion}${GRAMS}`} />
-            </ListItem>
-          ))}
-        </List>
-        <Box>
-          <Fab onClick={() => setIngredientDialogOpen(true)} size="small" color="primary" sx={{ mt: 3.5 }}>
-            <AddIcon />
-          </Fab>
-        </Box>
-      </Stack>
+                />
+              ))}
+            </List>
+            <Box>
+              <Fab onClick={() => setIngredientDialogOpen(true)} size="small" color="primary" sx={{ mt: 3.5 }}>
+                <AddIcon />
+              </Fab>
+            </Box>
+          </Stack>
+        </SortableContext>
+      </DndContext>
 
       <Box sx={{ flex: 1 }} />
 

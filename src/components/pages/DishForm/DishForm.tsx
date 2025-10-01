@@ -66,6 +66,7 @@ function DishForm() {
   useEffect(() => {
     const baseRecipe = recipes.find((recipe) => recipe.name === name);
     if (!baseRecipe) return;
+    console.log(baseRecipe.ingredients);
     replace(
       baseRecipe.ingredients.map((ingredient) => ({
         product: ingredient.product,
@@ -129,13 +130,9 @@ function DishForm() {
         />
       ) : null}
 
-      <List disablePadding sx={{ display: "flex", flexDirection: "column" }}>
+      <List disablePadding>
         {fields.map((field, index) => (
-          <ListItem
-            key={field.id}
-            disablePadding
-            sx={{ order: Object.values(PRODUCT_TYPE).indexOf(field.product.type as keyof typeof PRODUCT_TYPE) }}
-          >
+          <ListItem key={field.id} disablePadding>
             <ListItemIcon>
               <Controller
                 control={control}
