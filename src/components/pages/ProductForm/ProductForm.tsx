@@ -7,7 +7,7 @@ import useProducts from "@src/repository/useProducts.ts";
 import useUpsertProduct from "@src/repository/useUpsertProduct.ts";
 import { setProductIdToEdit } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
-import { GRAMS, HUNDRED, PRODUCT_TYPE, TAG } from "@src/utils/constants.ts";
+import { CURRENCY, GRAMS, HUNDRED, PRODUCT_TYPE, TAG } from "@src/utils/constants.ts";
 import { calculateCalories } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
 import _ from "lodash";
@@ -26,6 +26,7 @@ export type ProductFormData = {
   fiber: number;
   salt: number;
   portion: number;
+  cost: number;
   type: string;
   tag: (typeof TAG)[keyof typeof TAG];
 };
@@ -65,6 +66,7 @@ function ProductForm() {
     setValue("fiber", productToEdit.fiber);
     setValue("salt", productToEdit.salt);
     setValue("portion", productToEdit.portion);
+    setValue("cost", productToEdit.cost);
     setValue("type", productToEdit.type);
     setValue("tag", productToEdit.tag);
   }, [navigate, setValue, productToEdit]);
@@ -107,6 +109,13 @@ function ProductForm() {
           )}
         />
       </Stack>
+      <ControlledNumberField
+        control={control}
+        name="cost"
+        label={t("Shared:costPer100g")}
+        suffix={CURRENCY}
+        rules={{ required: true }}
+      />
       <Typography>{t("calories", { calories: caloriesPer100g, caloriesPerPortion })}</Typography>
       <ControlledNumberField
         control={control}

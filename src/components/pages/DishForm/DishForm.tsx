@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Chip,
   Fab,
   List,
   ListItem,
@@ -18,7 +19,7 @@ import useInsertDish from "@src/repository/useInsertDish.ts";
 import useRecipes from "@src/repository/useRecipes.ts";
 import { useAppSelector } from "@src/store/store.ts";
 import { GRAMS, MEAL_TIME, MULTIPLIER, PRODUCT_TYPE } from "@src/utils/constants.ts";
-import { calculateMacro, getTagFromProducts } from "@src/utils/functions.ts";
+import { calculateMacro, formatCurrency, getTagFromProducts } from "@src/utils/functions.ts";
 import useSortedDataByRecord from "@src/utils/hooks/useSortedDataByRecord.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedProduct } from "@src/utils/types.ts";
@@ -121,18 +122,21 @@ function DishForm() {
       />
 
       {name ? (
-        <MacroTable
-          calories={calculateMacro("calories", ingredients)}
-          proteins={calculateMacro("proteins", ingredients)}
-          fats={calculateMacro("fats", ingredients)}
-          carbohydrates={calculateMacro("carbohydrates", ingredients)}
-          extra={{
-            saturatedFats: calculateMacro("saturatedFats", ingredients),
-            sugar: calculateMacro("sugar", ingredients),
-            fiber: calculateMacro("fiber", ingredients),
-            salt: calculateMacro("salt", ingredients),
-          }}
-        />
+        <>
+          <Chip label={`${t("Shared:cost")}: ${formatCurrency(calculateMacro("cost", ingredients))}`}></Chip>
+          <MacroTable
+            calories={calculateMacro("calories", ingredients)}
+            proteins={calculateMacro("proteins", ingredients)}
+            fats={calculateMacro("fats", ingredients)}
+            carbohydrates={calculateMacro("carbohydrates", ingredients)}
+            extra={{
+              saturatedFats: calculateMacro("saturatedFats", ingredients),
+              sugar: calculateMacro("sugar", ingredients),
+              fiber: calculateMacro("fiber", ingredients),
+              salt: calculateMacro("salt", ingredients),
+            }}
+          />
+        </>
       ) : null}
 
       <List disablePadding>

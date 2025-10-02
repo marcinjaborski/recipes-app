@@ -31,3 +31,6 @@ export const getTagFromProducts = (products: MappedProduct[]) => {
   if (products.some((product) => product.tag === TAG.none)) return TAG.none;
   return TAG.vegan;
 };
+
+export const formatCurrency = (value: number) =>
+  new Intl.NumberFormat("pl-PL", { style: "currency", currency: "PLN" }).format(value);

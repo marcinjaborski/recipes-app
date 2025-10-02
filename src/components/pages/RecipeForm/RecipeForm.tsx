@@ -2,7 +2,7 @@ import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, Button, Fab, IconButton, List, ListItem, ListItemText, MenuItem, Stack } from "@mui/material";
+import { Box, Button, Chip, Fab, IconButton, List, ListItem, ListItemText, MenuItem, Stack } from "@mui/material";
 import ControlledTextField from "@src/components/atoms/ControlledTextField";
 import DraggableListItem from "@src/components/molecules/DraggableListItem";
 import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
@@ -12,7 +12,7 @@ import { setRecipeToEdit } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
 import { GRAMS, MEAL_TIME, MULTIPLIER } from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
-import { calculateMacro } from "@src/utils/functions.ts";
+import { calculateMacro, formatCurrency } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedProduct } from "@src/utils/types.ts";
 import { useState } from "react";
@@ -82,19 +82,22 @@ function RecipeForm() {
     <Stack component="form" spacing={2} sx={{ p: 3, minHeight: "100%" }} onSubmit={handleSubmit(onSubmit)}>
       <ControlledTextField control={control} name="name" label={t("name")} rules={{ required: true }} />
       <ControlledTextField multiline control={control} name="instruction" label={t("instruction")} />
-      <ControlledTextField
-        select
-        control={control}
-        name="recommendedMealTime"
-        label={t("recommendedMealTime")}
-        rules={{ required: true }}
-      >
-        {Object.values(MEAL_TIME).map((mealTime) => (
-          <MenuItem key={mealTime} value={mealTime}>
-            <ListItemText>{t(mealTime)}</ListItemText>
-          </MenuItem>
-        ))}
-      </ControlledTextField>
+      <Stack direction="row" alignItems="center" gap={1}>
+        <ControlledTextField
+          select
+          control={control}
+          name="recommendedMealTime"
+          label={t("recommendedMealTime")}
+          rules={{ required: true }}
+        >
+          {Object.values(MEAL_TIME).map((mealTime) => (
+            <MenuItem key={mealTime} value={mealTime}>
+              <ListItemText>{t(mealTime)}</ListItemText>
+            </MenuItem>
+          ))}
+        </ControlledTextField>
+        <Chip label={`${t("Shared:cost")}: ${formatCurrency(calculateMacro("cost", ingredientsForMacro))}`}></Chip>
+      </Stack>
 
       <MacroTable
         calories={calculateMacro("calories", ingredientsForMacro)}

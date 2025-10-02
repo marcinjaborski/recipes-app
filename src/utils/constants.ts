@@ -22,6 +22,7 @@ export const TAG = {
 } as const;
 
 export const GRAMS = "g";
+export const CURRENCY = "zł";
 export const MULTIPLIER = "x";
 export const DEFAULT_MULTIPLIER = 1;
 export const HUNDRED = 100;

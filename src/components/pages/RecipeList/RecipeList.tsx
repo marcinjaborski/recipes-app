@@ -10,7 +10,7 @@ import useRecipes from "@src/repository/useRecipes.ts";
 import { setRecipeToDeleteId, setRecipeToEdit } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
 import { MEAL_TIME } from "@src/utils/constants.ts";
-import { includesString } from "@src/utils/functions.ts";
+import { formatCurrency, includesString } from "@src/utils/functions.ts";
 import useSortedData from "@src/utils/hooks/useSortedData.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedRecipe } from "@src/utils/types.ts";
@@ -29,6 +29,7 @@ const COLUMNS = [
   "sugar",
   "fiber",
   "salt",
+  "cost",
   "recommendedMealTime",
 ] satisfies (keyof MappedRecipe)[];
 
@@ -73,7 +74,7 @@ function RecipeList() {
         <Table>
           <SortableHead
             columns={COLUMNS}
-            alignLeftColumns={["name", "recommendedMealTime"]}
+            alignLeftColumns={["name", "recommendedMealTime", "cost"]}
             columnNames={Object.fromEntries(COLUMNS.map((column) => [column, t(column)]))}
             sortBy={sortBy}
             setSortBy={setSortBy as Dispatch<SetStateAction<string>>}
@@ -88,6 +89,7 @@ function RecipeList() {
                 data={{
                   ...recipe,
                   tag: <TagIcon tag={recipe.tag} />,
+                  cost: formatCurrency(recipe.cost),
                   recommendedMealTime: t(`RecipeForm:${recipe.recommendedMealTime}`),
                 }}
                 onEdit={() => {

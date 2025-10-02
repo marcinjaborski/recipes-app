@@ -36,6 +36,7 @@ export const mapRecipe = (
     sugar: calculateMacro("sugar", ingredientForMacro),
     fiber: calculateMacro("fiber", ingredientForMacro),
     salt: calculateMacro("salt", ingredientForMacro),
+    cost: calculateMacro("cost", ingredientForMacro),
     tag: getTagFromProducts(ingredients.map(({ product }) => product)),
   };
 };

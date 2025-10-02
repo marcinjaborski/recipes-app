@@ -20,7 +20,7 @@ import useProducts from "@src/repository/useProducts.ts";
 import { setProductIdToEdit, setProductToDeleteId } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
 import { HUNDRED, PRODUCT_TYPE } from "@src/utils/constants.ts";
-import { includesString } from "@src/utils/functions.ts";
+import { formatCurrency, includesString } from "@src/utils/functions.ts";
 import useSortedData from "@src/utils/hooks/useSortedData.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedProduct } from "@src/utils/types.ts";
@@ -40,6 +40,7 @@ const COLUMNS = [
   "fiber",
   "salt",
   "portion",
+  "cost",
   "type",
 ] satisfies (keyof MappedProduct)[];
 
@@ -71,6 +72,7 @@ function ProductList() {
       sugar: product.sugar * portionMultiplier,
       fiber: product.fiber * portionMultiplier,
       salt: product.salt * portionMultiplier,
+      cost: product.cost * portionMultiplier,
     };
   });
   const { sortedData: sortedProducts, sortBy, setSortBy, sortDir, setSortDir } = useSortedData(mappedProducts, "name");
@@ -102,7 +104,7 @@ function ProductList() {
         <Table>
           <SortableHead
             columns={COLUMNS}
-            alignLeftColumns={["name", "type"]}
+            alignLeftColumns={["name", "type", "cost"]}
             columnNames={Object.fromEntries(COLUMNS.map((column) => [column, t(column)]))}
             sortBy={sortBy}
             setSortBy={setSortBy as Dispatch<SetStateAction<string>>}
@@ -118,6 +120,7 @@ function ProductList() {
                   ...product,
                   tag: <TagIcon tag={product.tag} />,
                   type: t(`ProductForm:${product.type as "proteins"}`),
+                  cost: `${formatCurrency(product.cost)}`,
                 }}
                 onEdit={() => {
                   dispatch(setProductIdToEdit(product.id));
