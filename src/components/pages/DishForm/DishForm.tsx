@@ -22,6 +22,7 @@ import { GRAMS, MEAL_TIME, MULTIPLIER, PRODUCT_TYPE } from "@src/utils/constants
 import { calculateMacro, formatCurrency, getTagFromProducts } from "@src/utils/functions.ts";
 import useSortedDataByRecord from "@src/utils/hooks/useSortedDataByRecord.ts";
 import routes from "@src/utils/routes.ts";
+import supabase from "@src/utils/supabase.ts";
 import { MappedProduct } from "@src/utils/types.ts";
 import _ from "lodash";
 import { useEffect, useState } from "react";
@@ -59,7 +60,14 @@ function DishForm() {
   });
   const { data: recipes } = useRecipes();
   const sortedRecipes = useSortedDataByRecord(recipes, "recommendedMealTime", MEAL_TIME);
-  const { mutate: insertDish } = useInsertDish({ onSuccess: () => navigate(routes.calendar) });
+  const { mutate: insertDish } = useInsertDish({
+    onSuccess: async () => {
+      const baseRecipe = recipes.find((recipe) => recipe.name === name);
+      if (!baseRecipe) return;
+      await supabase.from("recipes").update({ lastUsedDate: date }).eq("id", baseRecipe.id);
+      navigate(routes.calendar);
+    },
+  });
 
   const name = watch("name");
   const ingredients = watch("ingredients");

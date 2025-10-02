@@ -36,6 +36,7 @@ function SortableHead<T extends string>({
                   setSortDir("asc");
                 }
               }}
+              sx={{ whiteSpace: "nowrap" }}
             >
               {columnNames[columnName]}
             </TableSortLabel>

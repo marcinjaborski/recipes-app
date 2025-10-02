@@ -38,6 +38,7 @@ export const mapRecipe = (
     salt: calculateMacro("salt", ingredientForMacro),
     cost: calculateMacro("cost", ingredientForMacro),
     tag: getTagFromProducts(ingredients.map(({ product }) => product)),
+    lastUsedDate: recipe.lastUsedDate || "",
   };
 };
 

@@ -14,6 +14,7 @@ import { formatCurrency, includesString } from "@src/utils/functions.ts";
 import useSortedData from "@src/utils/hooks/useSortedData.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedRecipe } from "@src/utils/types.ts";
+import { DateTime } from "luxon";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -31,6 +32,7 @@ const COLUMNS = [
   "salt",
   "cost",
   "recommendedMealTime",
+  "lastUsedDate",
 ] satisfies (keyof MappedRecipe)[];
 
 function RecipeList() {
@@ -91,6 +93,7 @@ function RecipeList() {
                   tag: <TagIcon tag={recipe.tag} />,
                   cost: formatCurrency(recipe.cost),
                   recommendedMealTime: t(`RecipeForm:${recipe.recommendedMealTime}`),
+                  lastUsedDate: recipe.lastUsedDate ? DateTime.fromISO(recipe.lastUsedDate).toLocaleString() : "",
                 }}
                 onEdit={() => {
                   dispatch(setRecipeToEdit(recipe));

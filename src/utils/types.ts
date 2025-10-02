@@ -22,6 +22,7 @@ export type MappedRecipe = Tables<"recipes"> & {
   salt: number;
   cost: number;
   tag: Database["public"]["Enums"]["tag"] | null;
+  lastUsedDate: string;
 };
 
 export type MappedDish = Tables<"dishes"> & {

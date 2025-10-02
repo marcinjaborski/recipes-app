@@ -64,6 +64,7 @@ const resource = {
     salt: "Sól",
     cost: "Koszt",
     recommendedMealTime: "Pora dnia",
+    lastUsedDate: "Ostatnio użyto",
     confirmDelete: "Czy na pewno usunąć ten przepis?",
   },
   RecipeForm: {
