@@ -50,9 +50,20 @@ function MealTimeSection({
   const [ingredientDialogOpen, setIngredientDialogOpen] = useState(false);
   const [selectedProductName, setSelectedProductName] = useState("");
   const [selectedProductIngredients, setSelectedProductIngredients] = useState<MappedDish["ingredients"]>([]);
+  const [markedOffIngredients, setMarkedOffIngredients] = useState<string[]>([]);
 
   const onIngredientsModalClose = () => {
     setIngredientDialogOpen(false);
+  };
+
+  const markedOffSX = { textDecoration: "line-through", color: "gray" };
+
+  const handleMarkOff = (ingredient: string) => {
+    if (markedOffIngredients.includes(ingredient)) {
+      setMarkedOffIngredients((prevState) => prevState.filter((ing) => ing !== ingredient));
+    } else {
+      setMarkedOffIngredients((prevState) => [...prevState, ingredient]);
+    }
   };
 
   return (
@@ -122,9 +133,11 @@ function MealTimeSection({
           <Table>
             <TableBody>
               {selectedProductIngredients.map((ingredient) => (
-                <TableRow key={ingredient.product}>
-                  <TableCell>{ingredient.product}</TableCell>
-                  <TableCell>
+                <TableRow key={ingredient.product} onClick={() => handleMarkOff(ingredient.product)}>
+                  <TableCell sx={markedOffIngredients.includes(ingredient.product) ? markedOffSX : null}>
+                    {ingredient.product}
+                  </TableCell>
+                  <TableCell sx={markedOffIngredients.includes(ingredient.product) ? markedOffSX : null}>
                     {ingredient.amount}
                     {GRAMS}
                   </TableCell>
