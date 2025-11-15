@@ -25,8 +25,8 @@ export type MappedRecipe = Tables<"recipes"> & {
   lastUsedDate: string;
 };
 
-export type MappedDish = Tables<"dishes"> & {
-  ingredients: { product: string; amount: string }[];
+export type MappedDish = Omit<Tables<"dishes">, "ingredients"> & {
+  ingredients: { product: string; amount: string; type: string }[];
 };
 
 export type SortDir = "asc" | "desc";

@@ -59,20 +59,27 @@ function ProductList() {
     const typeFilterMatches = typeFilter === "" || product.type === typeFilter;
     return nameFilterMatches && typeFilterMatches;
   });
+
+  const processValue = (value: number, productType: string) => {
+    if (productType === PRODUCT_TYPE.spice) return null;
+    return value;
+  };
+
   const mappedProducts = filteredProducts.map((product) => {
     if (!macroPerPortion) return product;
     const portionMultiplier = product.portion / HUNDRED;
     return {
       ...product,
-      calories: product.calories * portionMultiplier,
-      proteins: product.proteins * portionMultiplier,
-      fats: product.fats * portionMultiplier,
-      saturatedFats: product.saturatedFats * portionMultiplier,
-      carbohydrates: product.carbohydrates * portionMultiplier,
-      sugar: product.sugar * portionMultiplier,
-      fiber: product.fiber * portionMultiplier,
-      salt: product.salt * portionMultiplier,
-      cost: product.cost * portionMultiplier,
+      calories: processValue(product.calories * portionMultiplier, product.type),
+      proteins: processValue(product.proteins * portionMultiplier, product.type),
+      fats: processValue(product.fats * portionMultiplier, product.type),
+      saturatedFats: processValue(product.saturatedFats * portionMultiplier, product.type),
+      carbohydrates: processValue(product.carbohydrates * portionMultiplier, product.type),
+      sugar: processValue(product.sugar * portionMultiplier, product.type),
+      fiber: processValue(product.fiber * portionMultiplier, product.type),
+      salt: processValue(product.salt * portionMultiplier, product.type),
+      cost: processValue(product.cost * portionMultiplier, product.type),
+      portion: processValue(product.portion, product.type),
     };
   });
   const { sortedData: sortedProducts, sortBy, setSortBy, sortDir, setSortDir } = useSortedData(mappedProducts, "name");
@@ -120,7 +127,7 @@ function ProductList() {
                   ...product,
                   tag: <TagIcon tag={product.tag} />,
                   type: t(`ProductForm:${product.type as "proteins"}`),
-                  cost: `${formatCurrency(product.cost)}`,
+                  cost: product.cost ? `${formatCurrency(product.cost)}` : null,
                 }}
                 onEdit={() => {
                   dispatch(setProductIdToEdit(product.id));

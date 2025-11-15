@@ -19,11 +19,12 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import SpicesInfo from "@src/components/atoms/SpicesInfo/SpicesInfo.tsx";
 import TagIcon from "@src/components/atoms/TagIcon";
 import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
 import { setDishToDeleteId } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch } from "@src/store/store.ts";
-import { GRAMS } from "@src/utils/constants.ts";
+import { GRAMS, PRODUCT_TYPE } from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
 import { MappedDish } from "@src/utils/types.ts";
 import _ from "lodash";
@@ -51,6 +52,10 @@ function MealTimeSection({
   const [selectedProductName, setSelectedProductName] = useState("");
   const [selectedProductIngredients, setSelectedProductIngredients] = useState<MappedDish["ingredients"]>([]);
   const [markedOffIngredients, setMarkedOffIngredients] = useState<string[]>([]);
+
+  const spices = selectedProductIngredients
+    .filter((ingredient) => ingredient.type === PRODUCT_TYPE.spice)
+    .map((ingredient) => ingredient.product);
 
   const onIngredientsModalClose = () => {
     setIngredientDialogOpen(false);
@@ -129,22 +134,27 @@ function MealTimeSection({
       <Divider />
       <Dialog open={ingredientDialogOpen} onClose={onIngredientsModalClose} fullWidth>
         <DialogTitle>{selectedProductName}</DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Table>
             <TableBody>
-              {selectedProductIngredients.map((ingredient) => (
-                <TableRow key={ingredient.product} onClick={() => handleMarkOff(ingredient.product)}>
-                  <TableCell sx={markedOffIngredients.includes(ingredient.product) ? markedOffSX : null}>
-                    {ingredient.product}
-                  </TableCell>
-                  <TableCell sx={markedOffIngredients.includes(ingredient.product) ? markedOffSX : null}>
-                    {ingredient.amount}
-                    {GRAMS}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {selectedProductIngredients.map((ingredient) => {
+                if (ingredient.type === PRODUCT_TYPE.spice) return null;
+
+                return (
+                  <TableRow key={ingredient.product} onClick={() => handleMarkOff(ingredient.product)}>
+                    <TableCell sx={markedOffIngredients.includes(ingredient.product) ? markedOffSX : null}>
+                      {ingredient.product}
+                    </TableCell>
+                    <TableCell sx={markedOffIngredients.includes(ingredient.product) ? markedOffSX : null}>
+                      {ingredient.amount}
+                      {GRAMS}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
+          <SpicesInfo spices={spices} />
         </DialogContent>
       </Dialog>
     </Stack>

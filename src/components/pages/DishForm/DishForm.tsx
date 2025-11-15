@@ -13,6 +13,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
+import SpicesInfo from "@src/components/atoms/SpicesInfo/SpicesInfo.tsx";
 import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
 import ProductDialog from "@src/components/organisms/ProductDialog";
 import useInsertDish from "@src/repository/useInsertDish.ts";
@@ -72,6 +73,8 @@ function DishForm() {
   const name = watch("name");
   const ingredients = watch("ingredients");
 
+  const spices = fields.filter((field) => field.product.type === PRODUCT_TYPE.spice).map((field) => field.product.name);
+
   useEffect(() => {
     const baseRecipe = recipes.find((recipe) => recipe.name === name);
     if (!baseRecipe) return;
@@ -106,7 +109,11 @@ function DishForm() {
       ),
       ingredients: ingredients
         .filter(({ included }) => included)
-        .map(({ product, amount, multiplier }) => ({ product: product.name, amount: amount * multiplier })),
+        .map(({ product, amount, multiplier }) => ({
+          product: product.name,
+          amount: amount * multiplier,
+          type: product.type,
+        })),
       date,
       mealTime,
       tag: getTagFromProducts(ingredients.map(({ product }) => product)),
@@ -149,7 +156,11 @@ function DishForm() {
 
       <List disablePadding>
         {fields.map((field, index) => (
-          <ListItem key={field.id} disablePadding>
+          <ListItem
+            key={field.id}
+            disablePadding
+            sx={{ display: field.product.type === PRODUCT_TYPE.spice ? "none" : undefined }}
+          >
             <ListItemIcon>
               <Controller
                 control={control}
@@ -190,6 +201,7 @@ function DishForm() {
             </Stack>
           </ListItem>
         ))}
+        <SpicesInfo spices={spices} />
         {name ? (
           <ListItem sx={{ justifyContent: "center", order: 9999 }}>
             <Fab size="small" onClick={() => setAddIngredientDialogOpen(true)}>

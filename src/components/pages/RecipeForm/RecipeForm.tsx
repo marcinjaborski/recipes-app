@@ -10,7 +10,7 @@ import ProductDialog from "@src/components/organisms/ProductDialog";
 import useUpsertRecipe from "@src/repository/useUpsertRecipe.ts";
 import { setRecipeToEdit } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
-import { GRAMS, MEAL_TIME, MULTIPLIER } from "@src/utils/constants.ts";
+import { GRAMS, MEAL_TIME, MULTIPLIER, PRODUCT_TYPE } from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
 import { calculateMacro, formatCurrency } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
@@ -127,7 +127,10 @@ function RecipeForm() {
                   item={{
                     id: ingredient.id,
                     primary: ingredient.name,
-                    secondary: `${multiplier}${MULTIPLIER} ${portion}${GRAMS}`,
+                    secondary:
+                      ingredient.type !== PRODUCT_TYPE.spice
+                        ? `${multiplier}${MULTIPLIER} ${portion}${GRAMS}`
+                        : undefined,
                     listItemProps: {
                       secondaryAction: (
                         <IconButton

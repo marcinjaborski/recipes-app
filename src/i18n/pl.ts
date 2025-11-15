@@ -117,6 +117,7 @@ const resource = {
     error: "Coś poszło nie tak",
   },
   Shared: {
+    spices: "Przyprawy: ",
     protein: "Białko",
     fat: "Tłuszcze",
     saturatedFat: "Tłuszcze nasycone",

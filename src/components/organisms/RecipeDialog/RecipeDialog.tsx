@@ -9,7 +9,8 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { GRAMS } from "@src/utils/constants.ts";
+import SpicesInfo from "@src/components/atoms/SpicesInfo/SpicesInfo.tsx";
+import { GRAMS, PRODUCT_TYPE } from "@src/utils/constants.ts";
 import { calculateMacro, formatCurrency } from "@src/utils/functions.ts";
 import { MappedRecipe } from "@src/utils/types.ts";
 import { useTranslation } from "react-i18next";
@@ -22,6 +23,9 @@ type RecipeDialogProps = {
 
 function RecipeDialog({ recipe, open, onClose }: RecipeDialogProps) {
   const { t } = useTranslation("Shared");
+  const spices = recipe.ingredients
+    .filter((ingredient) => ingredient.product.type === PRODUCT_TYPE.spice)
+    .map((ingredient) => ingredient.product.name);
 
   return (
     <Dialog open={open} fullWidth onClose={onClose}>
@@ -36,24 +40,27 @@ function RecipeDialog({ recipe, open, onClose }: RecipeDialogProps) {
           )}`}
         />
       </DialogTitle>
-      <DialogContent>
+      <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <Table>
           <TableBody>
-            {recipe.ingredients.map((ingredient) => (
-              <TableRow key={ingredient.product.id}>
-                <TableCell>{ingredient.product.name}</TableCell>
-                <TableCell>
-                  {ingredient.multiplier > 1 ? `${ingredient.multiplier}x ` : null}
-                  {ingredient.amount}
-                  {GRAMS}
-                </TableCell>
-              </TableRow>
-            ))}
+            {recipe.ingredients.map((ingredient) => {
+              if (ingredient.product.type === PRODUCT_TYPE.spice) return null;
+
+              return (
+                <TableRow key={ingredient.product.id}>
+                  <TableCell>{ingredient.product.name}</TableCell>
+                  <TableCell>
+                    {ingredient.multiplier > 1 ? `${ingredient.multiplier}x ` : null}
+                    {ingredient.amount}
+                    {GRAMS}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
-        <Typography variant="body2" sx={{ mt: 2 }}>
-          {recipe.instruction}
-        </Typography>
+        <SpicesInfo spices={spices} />
+        <Typography variant="body2">{recipe.instruction}</Typography>
       </DialogContent>
     </Dialog>
   );
