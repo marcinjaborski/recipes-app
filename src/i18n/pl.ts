@@ -102,6 +102,7 @@ const resource = {
   },
   DishForm: {
     recipe: "Przepis",
+    replaceProduct: "Zamień produkt",
   },
   ProductDialog: {
     title: "Dodaj produkt",

@@ -1,4 +1,5 @@
 import AddIcon from "@mui/icons-material/Add";
+import LoopIcon from "@mui/icons-material/Loop";
 import {
   Autocomplete,
   Box,
@@ -6,6 +7,7 @@ import {
   Checkbox,
   Chip,
   Fab,
+  IconButton,
   List,
   ListItem,
   ListItemIcon,
@@ -49,13 +51,14 @@ function DishForm() {
   const navigate = useNavigate();
   const { date, mealTime } = useAppSelector((state) => state.dish);
   const [addIngredientDialogOpen, setAddIngredientDialogOpen] = useState(false);
+  const [ingredientToReplaceIndex, setIngredientToReplaceIndex] = useState<number | null>(null);
   const { control, watch, handleSubmit } = useForm<DishFormData>({
     defaultValues: {
       name: "",
       ingredients: [],
     },
   });
-  const { fields, replace, append } = useFieldArray({
+  const { fields, replace, append, update } = useFieldArray({
     control,
     name: "ingredients",
   });
@@ -170,6 +173,9 @@ function DishForm() {
             </ListItemIcon>
             <ListItemText primary={field.product.name} />
             <Stack direction="row" sx={{ gap: 1 }}>
+              <IconButton onClick={() => setIngredientToReplaceIndex(index)}>
+                <LoopIcon />
+              </IconButton>
               <Controller
                 control={control}
                 name={`ingredients.${index}.multiplier` as const}
@@ -222,6 +228,19 @@ function DishForm() {
         setOpen={setAddIngredientDialogOpen}
         onAdd={(product, amount, multiplier) => append({ product, amount, multiplier, included: true })}
         filterProducts={(p) => !fields.find(({ product }) => product.id === p.id)}
+      />
+
+      <ProductDialog
+        open={ingredientToReplaceIndex !== null}
+        setOpen={() => setIngredientToReplaceIndex(null)}
+        title={t("replaceProduct")}
+        onAdd={(product, amount, multiplier) => {
+          if (ingredientToReplaceIndex === null) return;
+          update(ingredientToReplaceIndex, { product, amount, multiplier, included: true });
+        }}
+        filterProducts={(p) =>
+          ingredientToReplaceIndex ? fields[ingredientToReplaceIndex].product.type === p.type : true
+        }
       />
     </Stack>
   );

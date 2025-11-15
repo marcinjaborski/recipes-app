@@ -21,6 +21,7 @@ import { NumericFormat } from "react-number-format";
 type ProductDialogProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
+  title?: string;
   onAdd: (product: MappedProduct, amount: number, multiplier: number, included: boolean) => void;
   filterProducts?: (product: MappedProduct) => boolean;
   includedCheckbox?: boolean;
@@ -30,6 +31,7 @@ type ProductDialogProps = {
 function ProductDialog({
   open,
   setOpen,
+  title,
   onAdd,
   filterProducts = () => true,
   includedCheckbox = false,
@@ -45,7 +47,7 @@ function ProductDialog({
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
-      <DialogTitle>{t("title")}</DialogTitle>
+      <DialogTitle>{title ?? t("title")}</DialogTitle>
       <DialogContent>
         <Stack sx={{ gap: 2, mt: 1 }}>
           <Autocomplete
