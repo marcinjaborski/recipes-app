@@ -5,6 +5,7 @@ import TagIcon from "@src/components/atoms/TagIcon";
 import EditableRow from "@src/components/molecules/EditableRow";
 import SortableHead from "@src/components/molecules/SortableHead";
 import ConfirmDialog from "@src/components/organisms/ConfirmDialog";
+import RecipeDialog from "@src/components/organisms/RecipeDialog";
 import useDelete from "@src/repository/useDelete.ts";
 import useRecipes from "@src/repository/useRecipes.ts";
 import { setRecipeToDeleteId, setRecipeToEdit } from "@src/store/GlobalSlice.ts";
@@ -40,6 +41,8 @@ function RecipeList() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { recipeToDeleteId } = useAppSelector((state) => state.global);
+  const [viewedRecipe, setViewedRecipe] = useState<MappedRecipe | null>(null);
+  const [recipeDialogOpen, setRecipeDialogOpen] = useState(false);
   const [nameFilter, setNameFilter] = useState("");
   const [recommendedMealTimeFilter, setRecommendedMealTimeFilter] = useState("");
   const { data } = useRecipes();
@@ -76,7 +79,7 @@ function RecipeList() {
         <Table>
           <SortableHead
             columns={COLUMNS}
-            alignLeftColumns={["name", "recommendedMealTime", "cost"]}
+            alignLeftColumns={["name", "recommendedMealTime", "cost", "lastUsedDate"]}
             columnNames={Object.fromEntries(COLUMNS.map((column) => [column, t(column)]))}
             sortBy={sortBy}
             setSortBy={setSortBy as Dispatch<SetStateAction<string>>}
@@ -95,6 +98,10 @@ function RecipeList() {
                   recommendedMealTime: t(`RecipeForm:${recipe.recommendedMealTime}`),
                   lastUsedDate: recipe.lastUsedDate ? DateTime.fromISO(recipe.lastUsedDate).toLocaleString() : "",
                 }}
+                onClick={() => {
+                  setViewedRecipe(recipe);
+                  setRecipeDialogOpen(true);
+                }}
                 onEdit={() => {
                   dispatch(setRecipeToEdit(recipe));
                   navigate(routes.recipesFormUpdate);
@@ -105,6 +112,9 @@ function RecipeList() {
           </TableBody>
         </Table>
       </TableContainer>
+      {viewedRecipe ? (
+        <RecipeDialog recipe={viewedRecipe} open={recipeDialogOpen} onClose={() => setRecipeDialogOpen(false)} />
+      ) : null}
       <ConfirmDialog
         title={t("confirmDelete")}
         open={recipeToDeleteId !== null}

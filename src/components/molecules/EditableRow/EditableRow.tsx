@@ -7,11 +7,12 @@ import { LongPressReactEvents, useLongPress } from "use-long-press";
 type EditableRowProps<T extends string> = {
   columns: T[];
   data: Record<T, string | number | ReactNode>;
+  onClick?: () => void;
   onEdit: () => void;
   onDelete: () => void;
 };
 
-function EditableRow<T extends string>({ columns, data, onEdit, onDelete }: EditableRowProps<T>) {
+function EditableRow<T extends string>({ columns, data, onClick, onEdit, onDelete }: EditableRowProps<T>) {
   const { t } = useTranslation("Shared");
   const [holding, setHolding] = useState(false);
   const [menuPosition, setMenuPosition] = useState<PopoverPosition | undefined>(undefined);
@@ -41,7 +42,7 @@ function EditableRow<T extends string>({ columns, data, onEdit, onDelete }: Edit
 
   return (
     <>
-      <TableRow ref={rowRef} {...bind()} hover={holding}>
+      <TableRow ref={rowRef} {...bind()} onClick={onClick} hover={holding}>
         {columns.map((columnName) => (
           <TableCell
             key={columnName}
