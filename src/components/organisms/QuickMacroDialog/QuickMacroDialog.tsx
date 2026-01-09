@@ -30,7 +30,7 @@ function QuickMacroDialog({ open, setOpen, onAdd }: QuickMacroDialogProps) {
       name: "",
     },
   });
-  const calories = calculateCalories(watch("proteins"), watch("fats"), watch("carbohydrates"));
+  const calories = calculateCalories(watch("proteins"), watch("fats"), watch("carbohydrates"), 0);
 
   const onClose = () => {
     setOpen(false);
