@@ -10,7 +10,7 @@ import ProductDialog from "@src/components/organisms/ProductDialog";
 import useUpsertRecipe from "@src/repository/useUpsertRecipe.ts";
 import { setRecipeToEdit } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
-import { GRAMS, MEAL_TIME, MULTIPLIER, PRODUCT_TYPE } from "@src/utils/constants.ts";
+import { IngredientMeasure, MEAL_TIME, PRODUCT_TYPE } from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
 import { calculateMacro, formatCurrency } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
@@ -26,10 +26,10 @@ export type RecipeFormData = {
   recommendedMealTime: Enums<"mealTime">;
 };
 
-export type IngredientFormData = [MappedProduct, number, number, boolean];
+export type IngredientFormData = [MappedProduct, number, IngredientMeasure, boolean];
 
 function RecipeForm() {
-  const { t } = useTranslation(["RecipeForm", "Shared"]);
+  const { t } = useTranslation(["RecipeForm", "IngredientMeasure", "Shared"]);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { recipeToEdit } = useAppSelector((state) => state.global);
@@ -39,7 +39,7 @@ function RecipeForm() {
       : recipeToEdit.ingredients.map((ingredient) => [
           ingredient.product,
           ingredient.amount,
-          ingredient.multiplier,
+          ingredient.ingredientMeasure,
           ingredient.defaultIncluded,
         ]),
   );
@@ -71,10 +71,10 @@ function RecipeForm() {
     dispatch(setRecipeToEdit(null));
   };
 
-  const ingredientsForMacro = ingredients.map(([product, amount, multiplier, included]) => ({
+  const ingredientsForMacro = ingredients.map(([product, amount, ingredientMeasure, included]) => ({
     product,
     amount,
-    multiplier,
+    ingredientMeasure,
     included,
   }));
 
@@ -121,7 +121,7 @@ function RecipeForm() {
                   <ListItemText primary={t("noIngredients")} secondary="&nbsp;" />
                 </ListItem>
               ) : null}
-              {ingredients.map(([ingredient, portion, multiplier, defaultIncluded], index) => (
+              {ingredients.map(([ingredient, portion, ingredientMeasure, defaultIncluded], index) => (
                 <DraggableListItem
                   key={ingredient.name}
                   item={{
@@ -129,7 +129,7 @@ function RecipeForm() {
                     primary: ingredient.name,
                     secondary:
                       ingredient.type !== PRODUCT_TYPE.spice
-                        ? `${multiplier}${MULTIPLIER} ${portion}${GRAMS}`
+                        ? `${portion} ${t(`IngredientMeasure:${ingredientMeasure}`)}`
                         : undefined,
                     listItemProps: {
                       secondaryAction: (
@@ -172,8 +172,8 @@ function RecipeForm() {
         setOpen={setIngredientDialogOpen}
         includedCheckbox
         checkboxLabel={t("defaultIncluded")}
-        onAdd={(product, amount, multiplier, included) => {
-          setIngredients((prevState) => [...prevState, [product, amount, multiplier, included]]);
+        onAdd={(product, amount, ingredientMeasure, included) => {
+          setIngredients((prevState) => [...prevState, [product, amount, ingredientMeasure, included]]);
         }}
       />
     </Stack>

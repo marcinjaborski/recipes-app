@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import SpicesInfo from "@src/components/atoms/SpicesInfo/SpicesInfo.tsx";
-import { GRAMS, PRODUCT_TYPE } from "@src/utils/constants.ts";
+import { PRODUCT_TYPE } from "@src/utils/constants.ts";
 import { calculateMacro, formatCurrency } from "@src/utils/functions.ts";
 import { MappedRecipe } from "@src/utils/types.ts";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,7 @@ type RecipeDialogProps = {
 };
 
 function RecipeDialog({ recipe, open, onClose }: RecipeDialogProps) {
-  const { t } = useTranslation("Shared");
+  const { t } = useTranslation(["IngredientMeasure", "Shared"]);
   const spices = recipe.ingredients
     .filter((ingredient) => ingredient.product.type === PRODUCT_TYPE.spice)
     .map((ingredient) => ingredient.product.name);
@@ -32,7 +32,7 @@ function RecipeDialog({ recipe, open, onClose }: RecipeDialogProps) {
       <DialogTitle sx={{ display: "flex", flexWrap: "wrap", columnGap: 1 }}>
         {recipe.name}
         <Chip
-          label={`${t("cost")}: ${formatCurrency(
+          label={`${t("Shared:cost")}: ${formatCurrency(
             calculateMacro(
               "cost",
               recipe.ingredients.map((ingredient) => ({ ...ingredient, included: true })),
@@ -50,9 +50,7 @@ function RecipeDialog({ recipe, open, onClose }: RecipeDialogProps) {
                 <TableRow key={ingredient.product.id}>
                   <TableCell>{ingredient.product.name}</TableCell>
                   <TableCell>
-                    {ingredient.multiplier > 1 ? `${ingredient.multiplier}x ` : null}
-                    {ingredient.amount}
-                    {GRAMS}
+                    {ingredient.amount} {t(`IngredientMeasure:${ingredient.ingredientMeasure}`)}
                   </TableCell>
                 </TableRow>
               );

@@ -117,6 +117,10 @@ const resource = {
   Feedback: {
     error: "Coś poszło nie tak",
   },
+  IngredientMeasure: {
+    gram: "g",
+    portion: "porcja",
+  },
   Shared: {
     spices: "Przyprawy: ",
     protein: "Białko",

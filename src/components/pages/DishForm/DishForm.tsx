@@ -12,6 +12,8 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Typography,
@@ -23,8 +25,14 @@ import useInsertDish from "@src/repository/useInsertDish.ts";
 import useProducts from "@src/repository/useProducts.ts";
 import useRecipes from "@src/repository/useRecipes.ts";
 import { useAppSelector } from "@src/store/store.ts";
-import { GRAMS, MEAL_TIME, MULTIPLIER, PRODUCT_TYPE } from "@src/utils/constants.ts";
-import { calculateMacro, formatCurrency, getTagFromProducts, notNullish } from "@src/utils/functions.ts";
+import { INGREDIENT_MEASURE, IngredientMeasure, MEAL_TIME, PRODUCT_TYPE } from "@src/utils/constants.ts";
+import {
+  calculateAmount,
+  calculateMacro,
+  formatCurrency,
+  getTagFromProducts,
+  notNullish,
+} from "@src/utils/functions.ts";
 import useSortedDataByRecord from "@src/utils/hooks/useSortedDataByRecord.ts";
 import routes from "@src/utils/routes.ts";
 import supabase from "@src/utils/supabase.ts";
@@ -39,7 +47,7 @@ import { useNavigate } from "react-router-dom";
 type IngredientData = {
   product: MappedProduct;
   amount: number;
-  multiplier: number;
+  ingredientMeasure: IngredientMeasure;
   included: boolean;
 };
 
@@ -49,7 +57,7 @@ export type DishFormData = {
 };
 
 function DishForm() {
-  const { t } = useTranslation(["DishForm", "Shared"]);
+  const { t } = useTranslation(["DishForm", "IngredientMeasure", "Shared"]);
   const navigate = useNavigate();
   const { date, mealTime, dishToEdit } = useAppSelector((state) => state.dish);
   const [addIngredientDialogOpen, setAddIngredientDialogOpen] = useState(false);
@@ -88,7 +96,7 @@ function DishForm() {
       baseRecipe.ingredients.map((ingredient) => ({
         product: ingredient.product,
         amount: ingredient.amount,
-        multiplier: ingredient.multiplier,
+        ingredientMeasure: ingredient.ingredientMeasure,
         included: ingredient.defaultIncluded,
       })),
     );
@@ -104,7 +112,7 @@ function DishForm() {
           return {
             product,
             amount: Number(ingredient.amount),
-            multiplier: 1,
+            ingredientMeasure: INGREDIENT_MEASURE.gram,
             included: true,
           };
         })
@@ -134,10 +142,10 @@ function DishForm() {
       ),
       ingredients: ingredients
         .filter(({ included }) => included)
-        .map(({ product, amount, multiplier }) => ({
+        .map(({ product, amount, ingredientMeasure }) => ({
           id: product.id,
           product: product.name,
-          amount: amount * multiplier,
+          amount: calculateAmount(amount, product.portion, ingredientMeasure),
           type: product.type,
         })),
       date,
@@ -205,13 +213,12 @@ function DishForm() {
               </IconButton>
               <Controller
                 control={control}
-                name={`ingredients.${index}.multiplier` as const}
+                name={`ingredients.${index}.amount` as const}
                 render={({ field: { value, onChange } }) => (
                   <NumericFormat
                     customInput={TextField}
                     variant="standard"
-                    suffix={MULTIPLIER}
-                    sx={{ width: 40 }}
+                    sx={{ width: 50 }}
                     value={value}
                     onValueChange={({ floatValue }) => onChange(floatValue || "")}
                   />
@@ -219,16 +226,20 @@ function DishForm() {
               />
               <Controller
                 control={control}
-                name={`ingredients.${index}.amount` as const}
+                name={`ingredients.${index}.ingredientMeasure` as const}
                 render={({ field: { value, onChange } }) => (
-                  <NumericFormat
-                    customInput={TextField}
+                  <Select
                     variant="standard"
-                    suffix={GRAMS}
-                    sx={{ width: 50 }}
                     value={value}
-                    onValueChange={({ floatValue }) => onChange(floatValue || "")}
-                  />
+                    onChange={(event) => onChange(event.target.value)}
+                    sx={{ height: 32 }}
+                  >
+                    {Object.values(INGREDIENT_MEASURE).map((measure) => (
+                      <MenuItem key={measure} value={measure}>
+                        {t(`IngredientMeasure:${measure}`)}
+                      </MenuItem>
+                    ))}
+                  </Select>
                 )}
               />
             </Stack>
@@ -253,7 +264,7 @@ function DishForm() {
       <ProductDialog
         open={addIngredientDialogOpen}
         setOpen={setAddIngredientDialogOpen}
-        onAdd={(product, amount, multiplier) => append({ product, amount, multiplier, included: true })}
+        onAdd={(product, amount, ingredientMeasure) => append({ product, amount, ingredientMeasure, included: true })}
         filterProducts={(p) => !fields.find(({ product }) => product.id === p.id)}
       />
 
@@ -261,9 +272,9 @@ function DishForm() {
         open={ingredientToReplaceIndex !== null}
         setOpen={() => setIngredientToReplaceIndex(null)}
         title={t("replaceProduct")}
-        onAdd={(product, amount, multiplier) => {
+        onAdd={(product, amount, ingredientMeasure) => {
           if (ingredientToReplaceIndex === null) return;
-          update(ingredientToReplaceIndex, { product, amount, multiplier, included: true });
+          update(ingredientToReplaceIndex, { product, amount, ingredientMeasure, included: true });
         }}
         filterProducts={(p) =>
           ingredientToReplaceIndex ? fields[ingredientToReplaceIndex].product.type === p.type : true

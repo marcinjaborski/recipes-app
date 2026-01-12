@@ -24,7 +24,7 @@ import {
   PRODUCT_TYPE,
 } from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
-import { calculateMacro, getTagFromProducts } from "@src/utils/functions.ts";
+import { calculateAmount, calculateMacro, getTagFromProducts } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
 import _ from "lodash";
 import { DateTime } from "luxon";
@@ -117,9 +117,9 @@ function Calendar() {
       <ProductDialog
         open={addSingleProductDialogOpen !== false}
         setOpen={(value) => !value && setAddSingleProductDialogOpen(value)}
-        onAdd={(product, amount, multiplier) => {
+        onAdd={(product, amount, ingredientMeasure) => {
           if (!addSingleProductDialogOpen) return;
-          const productForMacro = [{ product, amount, multiplier, included: true }];
+          const productForMacro = [{ product, amount, ingredientMeasure, included: true }];
           insertDish({
             name: product.name,
             calories: calculateMacro("calories", productForMacro),
@@ -131,7 +131,9 @@ function Calendar() {
             fiber: calculateMacro("fiber", productForMacro),
             salt: calculateMacro("salt", productForMacro),
             vegetables:
-              product.type === PRODUCT_TYPE.fruit || product.type === PRODUCT_TYPE.vegetable ? amount * multiplier : 0,
+              product.type === PRODUCT_TYPE.fruit || product.type === PRODUCT_TYPE.vegetable
+                ? calculateAmount(amount, product.portion, ingredientMeasure)
+                : 0,
             date,
             mealTime: addSingleProductDialogOpen,
             tag: getTagFromProducts([product]),

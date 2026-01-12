@@ -21,10 +21,15 @@ export const TAG = {
   none: null,
 } as const;
 
+export const INGREDIENT_MEASURE = {
+  gram: "gram",
+  portion: "portion",
+} as const;
+
+export type IngredientMeasure = (typeof INGREDIENT_MEASURE)[keyof typeof INGREDIENT_MEASURE];
+
 export const GRAMS = "g";
 export const CURRENCY = "zł";
-export const MULTIPLIER = "x";
-export const DEFAULT_MULTIPLIER = 1;
 export const HUNDRED = 100;
 
 export const DAILY_CALORIES = 2000;
