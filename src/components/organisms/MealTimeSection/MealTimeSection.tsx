@@ -1,5 +1,6 @@
 import BoltIcon from "@mui/icons-material/Bolt";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import EggIcon from "@mui/icons-material/Egg";
 import InfoIcon from "@mui/icons-material/Info";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
@@ -22,14 +23,17 @@ import {
 import SpicesInfo from "@src/components/atoms/SpicesInfo/SpicesInfo.tsx";
 import TagIcon from "@src/components/atoms/TagIcon";
 import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
+import { setDishData } from "@src/store/DishSlice.ts";
 import { setDishToDeleteId } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch } from "@src/store/store.ts";
 import { GRAMS, PRODUCT_TYPE } from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
+import routes from "@src/utils/routes.ts";
 import { MappedDish } from "@src/utils/types.ts";
 import _ from "lodash";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 type MealTimeSectionProps = {
   mealTime: Enums<"mealTime">;
@@ -48,6 +52,7 @@ function MealTimeSection({
 }: MealTimeSectionProps) {
   const { t } = useTranslation(["Calendar", "Shared"]);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [ingredientDialogOpen, setIngredientDialogOpen] = useState(false);
   const [selectedProductName, setSelectedProductName] = useState("");
   const [selectedProductIngredients, setSelectedProductIngredients] = useState<MappedDish["ingredients"]>([]);
@@ -109,9 +114,22 @@ function MealTimeSection({
             key={dish.id}
             sx={{ gap: 1 }}
             secondaryAction={
-              <IconButton edge="end" onClick={() => dispatch(setDishToDeleteId(dish.id))}>
-                <DeleteIcon />
-              </IconButton>
+              <>
+                {dish.ingredients.length ? (
+                  <IconButton
+                    edge="end"
+                    onClick={() => {
+                      dispatch(setDishData({ date: dish.date, mealTime: dish.mealTime, dishToEdit: dish }));
+                      navigate(routes.dishForm);
+                    }}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                ) : null}
+                <IconButton edge="end" onClick={() => dispatch(setDishToDeleteId(dish.id))}>
+                  <DeleteIcon />
+                </IconButton>
+              </>
             }
           >
             {dish.name}

@@ -26,7 +26,7 @@ export type MappedRecipe = Tables<"recipes"> & {
 };
 
 export type MappedDish = Omit<Tables<"dishes">, "ingredients"> & {
-  ingredients: { product: string; amount: string; type: string }[];
+  ingredients: { id: number; product: string; amount: string; type: string }[];
 };
 
 export type SortDir = "asc" | "desc";

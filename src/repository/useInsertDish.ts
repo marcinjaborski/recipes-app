@@ -7,7 +7,7 @@ function useInsertDish(options?: { onSuccess: () => void }) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: TablesInsert<"dishes">) => supabase.from("dishes").insert(data).throwOnError(),
+    mutationFn: async (data: TablesInsert<"dishes">) => supabase.from("dishes").upsert(data).throwOnError(),
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKey.dishes.all });
     },

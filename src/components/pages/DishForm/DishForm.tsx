@@ -14,15 +14,17 @@ import {
   ListItemText,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import SpicesInfo from "@src/components/atoms/SpicesInfo/SpicesInfo.tsx";
 import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
 import ProductDialog from "@src/components/organisms/ProductDialog";
 import useInsertDish from "@src/repository/useInsertDish.ts";
+import useProducts from "@src/repository/useProducts.ts";
 import useRecipes from "@src/repository/useRecipes.ts";
 import { useAppSelector } from "@src/store/store.ts";
 import { GRAMS, MEAL_TIME, MULTIPLIER, PRODUCT_TYPE } from "@src/utils/constants.ts";
-import { calculateMacro, formatCurrency, getTagFromProducts } from "@src/utils/functions.ts";
+import { calculateMacro, formatCurrency, getTagFromProducts, notNullish } from "@src/utils/functions.ts";
 import useSortedDataByRecord from "@src/utils/hooks/useSortedDataByRecord.ts";
 import routes from "@src/utils/routes.ts";
 import supabase from "@src/utils/supabase.ts";
@@ -49,12 +51,12 @@ export type DishFormData = {
 function DishForm() {
   const { t } = useTranslation(["DishForm", "Shared"]);
   const navigate = useNavigate();
-  const { date, mealTime } = useAppSelector((state) => state.dish);
+  const { date, mealTime, dishToEdit } = useAppSelector((state) => state.dish);
   const [addIngredientDialogOpen, setAddIngredientDialogOpen] = useState(false);
   const [ingredientToReplaceIndex, setIngredientToReplaceIndex] = useState<number | null>(null);
   const { control, watch, handleSubmit } = useForm<DishFormData>({
     defaultValues: {
-      name: "",
+      name: dishToEdit?.name || "",
       ingredients: [],
     },
   });
@@ -62,6 +64,7 @@ function DishForm() {
     control,
     name: "ingredients",
   });
+  const { data: products } = useProducts();
   const { data: recipes } = useRecipes();
   const sortedRecipes = useSortedDataByRecord(recipes, "recommendedMealTime", MEAL_TIME);
   const { mutate: insertDish } = useInsertDish({
@@ -80,7 +83,7 @@ function DishForm() {
 
   useEffect(() => {
     const baseRecipe = recipes.find((recipe) => recipe.name === name);
-    if (!baseRecipe) return;
+    if (!baseRecipe || dishToEdit) return;
     replace(
       baseRecipe.ingredients.map((ingredient) => ({
         product: ingredient.product,
@@ -89,10 +92,29 @@ function DishForm() {
         included: ingredient.defaultIncluded,
       })),
     );
-  }, [recipes, name, replace]);
+  }, [recipes, name, replace, dishToEdit]);
+
+  useEffect(() => {
+    if (dishToEdit === null) return;
+    replace(
+      dishToEdit.ingredients
+        .map((ingredient) => {
+          const product = products.find((product) => product.id === ingredient.id);
+          if (!product) return;
+          return {
+            product,
+            amount: Number(ingredient.amount),
+            multiplier: 1,
+            included: true,
+          };
+        })
+        .filter(notNullish),
+    );
+  }, [dishToEdit, products, replace]);
 
   const onSubmit = (data: DishFormData) => {
     insertDish({
+      id: dishToEdit?.id,
       name: data.name,
       calories: calculateMacro("calories", ingredients),
       proteins: calculateMacro("proteins", ingredients),
@@ -113,6 +135,7 @@ function DishForm() {
       ingredients: ingredients
         .filter(({ included }) => included)
         .map(({ product, amount, multiplier }) => ({
+          id: product.id,
           product: product.name,
           amount: amount * multiplier,
           type: product.type,
@@ -125,19 +148,23 @@ function DishForm() {
 
   return (
     <Stack component="form" spacing={2} sx={{ p: 3, minHeight: "100%" }} onSubmit={handleSubmit(onSubmit)}>
-      <Controller
-        control={control}
-        name="name"
-        rules={{ required: true }}
-        render={({ field, fieldState: { error } }) => (
-          <Autocomplete
-            inputValue={field.value}
-            onInputChange={(_, newValue) => field.onChange(newValue)}
-            renderInput={(params) => <TextField {...params} error={!!error} label={t("recipe")} />}
-            options={sortedRecipes.map((recipe) => recipe.name)}
-          />
-        )}
-      />
+      {!dishToEdit ? (
+        <Controller
+          control={control}
+          name="name"
+          rules={{ required: true }}
+          render={({ field, fieldState: { error } }) => (
+            <Autocomplete
+              inputValue={field.value}
+              onInputChange={(_, newValue) => field.onChange(newValue)}
+              renderInput={(params) => <TextField {...params} error={!!error} label={t("recipe")} />}
+              options={sortedRecipes.map((recipe) => recipe.name)}
+            />
+          )}
+        />
+      ) : (
+        <Typography variant="h5">{dishToEdit.name}</Typography>
+      )}
 
       {name ? (
         <>

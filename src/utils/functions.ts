@@ -34,3 +34,7 @@ export const getTagFromProducts = (products: MappedProduct[]) => {
 
 export const formatCurrency = (value: number) =>
   new Intl.NumberFormat("pl-PL", { style: "currency", currency: "PLN" }).format(value);
+
+export const notNullish = <T>(candidate: T | null | undefined): candidate is T => {
+  return candidate !== null && candidate !== undefined;
+};

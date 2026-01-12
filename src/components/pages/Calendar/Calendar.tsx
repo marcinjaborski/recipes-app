@@ -55,7 +55,7 @@ function Calendar() {
           onQuickAddMacroClick={() => setQuickAddMacroDialogOpen(mealTime)}
           onAddSingleProductClick={() => setAddSingleProductDialogOpen(mealTime)}
           onOpenDishForm={() => {
-            dispatch(setDishData({ date, mealTime }));
+            dispatch(setDishData({ date, mealTime, dishToEdit: null }));
             navigate(routes.dishForm);
           }}
         />
