@@ -112,7 +112,7 @@ function MealTimeSection({
         {dishes.map((dish) => (
           <ListItem
             key={dish.id}
-            sx={{ gap: 1 }}
+            sx={{ gap: 1, pr: dish.ingredients.length ? 12 : 8 }}
             secondaryAction={
               <>
                 {dish.ingredients.length ? (
