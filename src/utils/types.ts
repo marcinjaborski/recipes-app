@@ -1,3 +1,4 @@
+import { IngredientMeasure } from "@src/utils/constants.ts";
 import { Database, Tables } from "@src/utils/database.types.ts";
 
 export type TableType = keyof Database["public"]["Tables"];
@@ -25,8 +26,16 @@ export type MappedRecipe = Tables<"recipes"> & {
   lastUsedDate: string;
 };
 
+export type MappedDishIngredient = {
+  id: number;
+  product: string;
+  amount: number;
+  ingredientMeasure: IngredientMeasure;
+  type: string;
+};
+
 export type MappedDish = Omit<Tables<"dishes">, "ingredients"> & {
-  ingredients: { id: number; product: string; amount: string; type: string }[];
+  ingredients: MappedDishIngredient[];
 };
 
 export type SortDir = "asc" | "desc";

@@ -26,7 +26,7 @@ import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
 import { setDishData } from "@src/store/DishSlice.ts";
 import { setDishToDeleteId } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch } from "@src/store/store.ts";
-import { GRAMS, PRODUCT_TYPE } from "@src/utils/constants.ts";
+import { PRODUCT_TYPE } from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedDish } from "@src/utils/types.ts";
@@ -50,7 +50,7 @@ function MealTimeSection({
   onAddSingleProductClick,
   onOpenDishForm,
 }: MealTimeSectionProps) {
-  const { t } = useTranslation(["Calendar", "Shared"]);
+  const { t } = useTranslation(["Calendar", "IngredientMeasure", "Shared"]);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [ingredientDialogOpen, setIngredientDialogOpen] = useState(false);
@@ -164,8 +164,7 @@ function MealTimeSection({
                       {ingredient.product}
                     </TableCell>
                     <TableCell sx={markedOffIngredients.includes(ingredient.product) ? markedOffSX : null}>
-                      {ingredient.amount}
-                      {GRAMS}
+                      {ingredient.amount} {t(`IngredientMeasure:${ingredient.ingredientMeasure}`)}
                     </TableCell>
                   </TableRow>
                 );
