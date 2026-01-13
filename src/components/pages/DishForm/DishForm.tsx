@@ -26,7 +26,13 @@ import useProducts from "@src/repository/useProducts.ts";
 import useRecipes from "@src/repository/useRecipes.ts";
 import { useAppSelector } from "@src/store/store.ts";
 import { INGREDIENT_MEASURE, IngredientMeasure, MEAL_TIME, PRODUCT_TYPE } from "@src/utils/constants.ts";
-import { calculateMacro, formatCurrency, getTagFromProducts, notNullish } from "@src/utils/functions.ts";
+import {
+  calculateAmount,
+  calculateMacro,
+  formatCurrency,
+  getTagFromProducts,
+  notNullish,
+} from "@src/utils/functions.ts";
 import useSortedDataByRecord from "@src/utils/hooks/useSortedDataByRecord.ts";
 import routes from "@src/utils/routes.ts";
 import supabase from "@src/utils/supabase.ts";
@@ -106,7 +112,7 @@ function DishForm() {
           return {
             product,
             amount: ingredient.amount,
-            ingredientMeasure: ingredient.ingredientMeasure,
+            ingredientMeasure: INGREDIENT_MEASURE.gram,
             included: true,
           };
         })
@@ -140,8 +146,7 @@ function DishForm() {
           ({ product, amount, ingredientMeasure }): MappedDishIngredient => ({
             id: product.id,
             product: product.name,
-            amount,
-            ingredientMeasure,
+            amount: calculateAmount(amount, product.portion, ingredientMeasure),
             type: product.type,
           }),
         ),

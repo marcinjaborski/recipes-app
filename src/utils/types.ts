@@ -1,4 +1,3 @@
-import { IngredientMeasure } from "@src/utils/constants.ts";
 import { Database, Tables } from "@src/utils/database.types.ts";
 
 export type TableType = keyof Database["public"]["Tables"];
@@ -30,7 +29,6 @@ export type MappedDishIngredient = {
   id: number;
   product: string;
   amount: number;
-  ingredientMeasure: IngredientMeasure;
   type: string;
 };
 

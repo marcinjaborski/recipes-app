@@ -26,7 +26,7 @@ import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
 import { setDishData } from "@src/store/DishSlice.ts";
 import { setDishToDeleteId } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch } from "@src/store/store.ts";
-import { PRODUCT_TYPE } from "@src/utils/constants.ts";
+import { GRAMS, PRODUCT_TYPE } from "@src/utils/constants.ts";
 import { Enums } from "@src/utils/database.types.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedDish } from "@src/utils/types.ts";
@@ -153,7 +153,7 @@ function MealTimeSection({
       <Dialog open={ingredientDialogOpen} onClose={onIngredientsModalClose} fullWidth>
         <DialogTitle>{selectedProductName}</DialogTitle>
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <Table>
+          <Table sx={{ whiteSpace: "nowrap" }}>
             <TableBody>
               {selectedProductIngredients.map((ingredient) => {
                 if (ingredient.type === PRODUCT_TYPE.spice) return null;
@@ -164,7 +164,8 @@ function MealTimeSection({
                       {ingredient.product}
                     </TableCell>
                     <TableCell sx={markedOffIngredients.includes(ingredient.product) ? markedOffSX : null}>
-                      {ingredient.amount} {t(`IngredientMeasure:${ingredient.ingredientMeasure}`)}
+                      {ingredient.amount}
+                      {GRAMS}
                     </TableCell>
                   </TableRow>
                 );
