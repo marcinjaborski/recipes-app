@@ -51,7 +51,7 @@ function RecipeDialog({ recipe, open, onClose }: RecipeDialogProps) {
         />
       </DialogTitle>
       <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <Table>
+        <Table sx={{ whiteSpace: "nowrap" }}>
           <TableBody>
             {recipe.ingredients.map((ingredient, index) => {
               if (ingredient.product.type === PRODUCT_TYPE.spice) return null;
