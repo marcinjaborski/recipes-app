@@ -37,7 +37,6 @@ import useSortedDataByRecord from "@src/utils/hooks/useSortedDataByRecord.ts";
 import routes from "@src/utils/routes.ts";
 import supabase from "@src/utils/supabase.ts";
 import { MappedDishIngredient, MappedProduct } from "@src/utils/types.ts";
-import _ from "lodash";
 import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -132,14 +131,13 @@ function DishForm() {
       sugar: calculateMacro("sugar", ingredients),
       fiber: calculateMacro("fiber", ingredients),
       salt: calculateMacro("salt", ingredients),
-      vegetables: _.sumBy(
-        ingredients.filter(
+      vegetables: ingredients
+        .filter(
           (ingredient) =>
             ingredient.included &&
             (ingredient.product.type === PRODUCT_TYPE.fruit || ingredient.product.type === PRODUCT_TYPE.vegetable),
-        ),
-        "amount",
-      ),
+        )
+        .reduce((acc, curr) => acc + calculateAmount(curr.amount, curr.product.portion, curr.ingredientMeasure), 0),
       ingredients: ingredients
         .filter(({ included }) => included)
         .map(

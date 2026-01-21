@@ -130,6 +130,9 @@ function Calendar() {
             sugar: calculateMacro("sugar", productForMacro),
             fiber: calculateMacro("fiber", productForMacro),
             salt: calculateMacro("salt", productForMacro),
+            ingredients: [
+              { product: product.name, amount: calculateAmount(amount, product.portion, ingredientMeasure) },
+            ],
             vegetables:
               product.type === PRODUCT_TYPE.fruit || product.type === PRODUCT_TYPE.vegetable
                 ? calculateAmount(amount, product.portion, ingredientMeasure)
