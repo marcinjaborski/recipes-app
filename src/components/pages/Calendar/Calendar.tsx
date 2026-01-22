@@ -1,4 +1,7 @@
-import { Box, Stack, TextField } from "@mui/material";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { Box, IconButton, InputAdornment, Stack, TextField } from "@mui/material";
 import MacroCounter from "@src/components/molecules/MacroCounter";
 import ConfirmDialog from "@src/components/organisms/ConfirmDialog";
 import MealTimeSection from "@src/components/organisms/MealTimeSection";
@@ -7,6 +10,7 @@ import QuickMacroDialog from "@src/components/organisms/QuickMacroDialog";
 import useDelete from "@src/repository/useDelete.ts";
 import useDishes from "@src/repository/useDishes.ts";
 import useInsertDish from "@src/repository/useInsertDish.ts";
+import { setDate, setNextDay, setPreviousDay } from "@src/store/CalendarSlice.ts";
 import { setDishData } from "@src/store/DishSlice.ts";
 import { setDishToDeleteId } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
@@ -27,18 +31,19 @@ import { Enums } from "@src/utils/database.types.ts";
 import { calculateAmount, calculateMacro, getTagFromProducts } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
 import _ from "lodash";
-import { DateTime } from "luxon";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+
+const DATE_ICON_FONT_SIZE = 40;
 
 function Calendar() {
   const { t } = useTranslation(["Calendar", "Shared"]);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { dishToDeleteId } = useAppSelector((state) => state.global);
+  const { date } = useAppSelector((state) => state.calendar);
   const { mutate: deleteDish } = useDelete("dishes");
-  const [date, setDate] = useState(DateTime.now().toSQLDate());
   const [quickAddMacroDialogOpen, setQuickAddMacroDialogOpen] = useState<Enums<"mealTime"> | false>(false);
   const [addSingleProductDialogOpen, setAddSingleProductDialogOpen] = useState<Enums<"mealTime"> | false>(false);
   const { data: dishes } = useDishes({ date });
@@ -46,7 +51,30 @@ function Calendar() {
 
   return (
     <Stack gap={2} sx={{ p: 2, minHeight: "100%" }}>
-      <TextField type="date" sx={{ colorScheme: "dark" }} value={date} onChange={(e) => setDate(e.target.value)} />
+      <Stack direction="row" spacing={1}>
+        <IconButton onClick={() => dispatch(setPreviousDay())}>
+          <ChevronLeftIcon sx={{ fontSize: DATE_ICON_FONT_SIZE }} />
+        </IconButton>
+        <TextField
+          fullWidth
+          type="date"
+          sx={{ colorScheme: "dark" }}
+          value={date}
+          onChange={(e) => dispatch(setDate(e.target.value))}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <CalendarTodayIcon />
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+        <IconButton onClick={() => dispatch(setNextDay())}>
+          <ChevronRightIcon sx={{ fontSize: DATE_ICON_FONT_SIZE }} />
+        </IconButton>
+      </Stack>
       {Object.values(MEAL_TIME).map((mealTime) => (
         <MealTimeSection
           key={mealTime}

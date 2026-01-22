@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { calendarReducer } from "@src/store/CalendarSlice.ts";
 import { dishReducer } from "@src/store/DishSlice.ts";
 import { feedbackReducer } from "@src/store/FeedbackSlice.ts";
 import { globalReducer } from "@src/store/GlobalSlice.ts";
@@ -7,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 const store = configureStore({
   reducer: {
     global: globalReducer,
+    calendar: calendarReducer,
     dish: dishReducer,
     feedback: feedbackReducer,
   },
