@@ -15,6 +15,7 @@ import { formatCurrency, includesString } from "@src/utils/functions.ts";
 import useSortedData from "@src/utils/hooks/useSortedData.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedRecipe } from "@src/utils/types.ts";
+import { round } from "lodash";
 import { DateTime } from "luxon";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -55,7 +56,19 @@ function RecipeList() {
       recommendedMealTimeFilter === "" || recipe.recommendedMealTime === recommendedMealTimeFilter;
     return nameFilterMatches && recommendedMealTimeFilterMatches;
   });
-  const { sortedData: sortedRecipes, sortBy, setSortBy, sortDir, setSortDir } = useSortedData(filteredRecipes, "name");
+  const mappedRecipes = filteredRecipes.map((recipe) => ({
+    ...recipe,
+    calories: round(recipe.calories / recipe.portions, 1),
+    proteins: round(recipe.proteins / recipe.portions, 1),
+    fats: round(recipe.fats / recipe.portions, 1),
+    saturatedFats: round(recipe.saturatedFats / recipe.portions, 1),
+    carbohydrates: round(recipe.carbohydrates / recipe.portions, 1),
+    sugar: round(recipe.sugar / recipe.portions, 1),
+    fiber: round(recipe.fiber / recipe.portions, 1),
+    salt: round(recipe.salt / recipe.portions, 1),
+    cost: round(recipe.cost / recipe.portions, 1),
+  }));
+  const { sortedData: sortedRecipes, sortBy, setSortBy, sortDir, setSortDir } = useSortedData(mappedRecipes, "name");
 
   return (
     <>

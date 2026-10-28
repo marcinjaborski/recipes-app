@@ -3,6 +3,7 @@ import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import { Box, Button, Chip, Fab, IconButton, List, ListItem, ListItemText, MenuItem, Stack } from "@mui/material";
+import ControlledNumberField from "@src/components/atoms/ControlledNumberField";
 import ControlledTextField from "@src/components/atoms/ControlledTextField";
 import DraggableListItem from "@src/components/molecules/DraggableListItem";
 import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
@@ -24,6 +25,7 @@ export type RecipeFormData = {
   name: string;
   instruction: string;
   recommendedMealTime: Enums<"mealTime">;
+  portions: number;
 };
 
 export type IngredientFormData = [MappedProduct, number, IngredientMeasure, boolean];
@@ -44,19 +46,22 @@ function RecipeForm() {
         ]),
   );
   const [ingredientDialogOpen, setIngredientDialogOpen] = useState(false);
-  const { control, handleSubmit } = useForm<RecipeFormData>({
+  const { control, handleSubmit, watch } = useForm<RecipeFormData>({
     defaultValues: recipeToEdit
       ? {
           name: recipeToEdit.name,
           instruction: recipeToEdit.instruction,
           recommendedMealTime: recipeToEdit.recommendedMealTime,
+          portions: recipeToEdit.portions,
         }
       : {
           name: "",
           instruction: "",
           recommendedMealTime: MEAL_TIME.breakfast,
+          portions: 1,
         },
   });
+  const portions = watch("portions");
   const { mutate: upsertRecipe } = useUpsertRecipe({ onSuccess: () => navigate(routes.recipesList) });
 
   const onDragEnd = ({ active, over }: DragEndEvent) => {
@@ -80,7 +85,22 @@ function RecipeForm() {
 
   return (
     <Stack component="form" spacing={2} sx={{ p: 3, minHeight: "100%" }} onSubmit={handleSubmit(onSubmit)}>
-      <ControlledTextField control={control} name="name" label={t("name")} rules={{ required: true }} />
+      <Stack direction="row" spacing={2}>
+        <ControlledTextField
+          control={control}
+          name="name"
+          label={t("name")}
+          rules={{ required: true }}
+          sx={{ flex: 4 }}
+        />
+        <ControlledNumberField
+          control={control}
+          name="portions"
+          label={t("Shared:portions")}
+          rules={{ required: true }}
+          sx={{ flex: 1 }}
+        />
+      </Stack>
       <ControlledTextField multiline control={control} name="instruction" label={t("instruction")} />
       <Stack direction="row" alignItems="center" gap={1}>
         <ControlledTextField
@@ -96,19 +116,21 @@ function RecipeForm() {
             </MenuItem>
           ))}
         </ControlledTextField>
-        <Chip label={`${t("Shared:cost")}: ${formatCurrency(calculateMacro("cost", ingredientsForMacro))}`}></Chip>
+        <Chip
+          label={`${t("Shared:cost")}: ${formatCurrency(calculateMacro("cost", ingredientsForMacro, portions))}`}
+        ></Chip>
       </Stack>
 
       <MacroTable
-        calories={calculateMacro("calories", ingredientsForMacro)}
-        proteins={calculateMacro("proteins", ingredientsForMacro)}
-        fats={calculateMacro("fats", ingredientsForMacro)}
-        carbohydrates={calculateMacro("carbohydrates", ingredientsForMacro)}
+        calories={calculateMacro("calories", ingredientsForMacro, portions)}
+        proteins={calculateMacro("proteins", ingredientsForMacro, portions)}
+        fats={calculateMacro("fats", ingredientsForMacro, portions)}
+        carbohydrates={calculateMacro("carbohydrates", ingredientsForMacro, portions)}
         extra={{
-          saturatedFats: calculateMacro("saturatedFats", ingredientsForMacro),
-          sugar: calculateMacro("sugar", ingredientsForMacro),
-          fiber: calculateMacro("fiber", ingredientsForMacro),
-          salt: calculateMacro("salt", ingredientsForMacro),
+          saturatedFats: calculateMacro("saturatedFats", ingredientsForMacro, portions),
+          sugar: calculateMacro("sugar", ingredientsForMacro, portions),
+          fiber: calculateMacro("fiber", ingredientsForMacro, portions),
+          salt: calculateMacro("salt", ingredientsForMacro, portions),
         }}
       />
 

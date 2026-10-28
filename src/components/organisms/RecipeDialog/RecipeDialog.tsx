@@ -3,6 +3,7 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  Stack,
   Table,
   TableBody,
   TableCell,
@@ -41,14 +42,17 @@ function RecipeDialog({ recipe, open, onClose }: RecipeDialogProps) {
     <Dialog open={open} fullWidth onClose={onClose}>
       <DialogTitle sx={{ display: "flex", flexWrap: "wrap", columnGap: 1 }}>
         {recipe.name}
-        <Chip
-          label={`${t("Shared:cost")}: ${formatCurrency(
-            calculateMacro(
-              "cost",
-              recipe.ingredients.map((ingredient) => ({ ...ingredient, included: true })),
-            ),
-          )}`}
-        />
+        <Stack direction="row" spacing={2}>
+          <Chip
+            label={`${t("Shared:cost")}: ${formatCurrency(
+              calculateMacro(
+                "cost",
+                recipe.ingredients.map((ingredient) => ({ ...ingredient, included: true })),
+              ),
+            )}`}
+          />
+          {recipe.portions > 1 ? <Chip label={`${t("Shared:portions")}: ${recipe.portions}`} /> : null}
+        </Stack>
       </DialogTitle>
       <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <Table sx={{ whiteSpace: "nowrap" }}>

@@ -23,13 +23,14 @@ export const includesString = (string: string, substring: string) => {
 export const calculateMacro = (
   field: Exclude<keyof MappedProduct, "id" | "name" | "created_at" | "type" | "tag">,
   ingredients: { product: MappedProduct; amount: number; ingredientMeasure: IngredientMeasure; included: boolean }[],
+  portions = 1,
 ) => {
   const value = ingredients.reduce((sum, ingredient) => {
     if (!ingredient.included) return sum;
     const amount = calculateAmount(ingredient.amount, ingredient.product.portion, ingredient.ingredientMeasure);
     return sum + (ingredient.product[field] * amount) / HUNDRED;
   }, 0);
-  return _.round(value, field.includes("calories") ? 0 : field === "salt" ? 2 : 1);
+  return _.round(value / portions, field.includes("calories") ? 0 : field === "salt" ? 2 : 1);
 };
 
 export const getTagFromProducts = (products: MappedProduct[]) => {

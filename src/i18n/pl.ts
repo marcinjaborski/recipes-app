@@ -131,6 +131,7 @@ const resource = {
     fiber: "Błonnik",
     salt: "Sól",
     portion: "Porcja",
+    portions: "Porcje",
     cost: "Koszt",
     costPer100g: "Koszt za 100g",
     add: "Dodaj",

@@ -71,6 +71,7 @@ function DishForm() {
     control,
     name: "ingredients",
   });
+  const [portions, setPortions] = useState<number | undefined>(1);
   const { data: products } = useProducts();
   const { data: recipes } = useRecipes();
   const sortedRecipes = useSortedDataByRecord(recipes, "recommendedMealTime", MEAL_TIME);
@@ -85,6 +86,8 @@ function DishForm() {
 
   const name = watch("name");
   const ingredients = watch("ingredients");
+  const baseRecipe = recipes.find((recipe) => recipe.name === name);
+  const portionMultiplier = (baseRecipe?.portions || 1) / (portions || 1);
 
   const spices = fields.filter((field) => field.product.type === PRODUCT_TYPE.spice).map((field) => field.product.name);
 
@@ -123,14 +126,14 @@ function DishForm() {
     insertDish({
       id: dishToEdit?.id,
       name: data.name,
-      calories: calculateMacro("calories", ingredients),
-      proteins: calculateMacro("proteins", ingredients),
-      fats: calculateMacro("fats", ingredients),
-      saturatedFats: calculateMacro("saturatedFats", ingredients),
-      carbohydrates: calculateMacro("carbohydrates", ingredients),
-      sugar: calculateMacro("sugar", ingredients),
-      fiber: calculateMacro("fiber", ingredients),
-      salt: calculateMacro("salt", ingredients),
+      calories: calculateMacro("calories", ingredients, portionMultiplier),
+      proteins: calculateMacro("proteins", ingredients, portionMultiplier),
+      fats: calculateMacro("fats", ingredients, portionMultiplier),
+      saturatedFats: calculateMacro("saturatedFats", ingredients, portionMultiplier),
+      carbohydrates: calculateMacro("carbohydrates", ingredients, portionMultiplier),
+      sugar: calculateMacro("sugar", ingredients, portionMultiplier),
+      fiber: calculateMacro("fiber", ingredients, portionMultiplier),
+      salt: calculateMacro("salt", ingredients, portionMultiplier),
       vegetables: ingredients
         .filter(
           (ingredient) =>
@@ -176,17 +179,27 @@ function DishForm() {
 
       {name ? (
         <>
-          <Chip label={`${t("Shared:cost")}: ${formatCurrency(calculateMacro("cost", ingredients))}`}></Chip>
+          <NumericFormat
+            label={t("Shared:portions")}
+            customInput={TextField}
+            fullWidth
+            value={portions}
+            onValueChange={({ floatValue }) => setPortions(floatValue)}
+            suffix={`/${baseRecipe?.portions || 1}`}
+          />
+          <Chip
+            label={`${t("Shared:cost")}: ${formatCurrency(calculateMacro("cost", ingredients, portionMultiplier))}`}
+          ></Chip>
           <MacroTable
-            calories={calculateMacro("calories", ingredients)}
-            proteins={calculateMacro("proteins", ingredients)}
-            fats={calculateMacro("fats", ingredients)}
-            carbohydrates={calculateMacro("carbohydrates", ingredients)}
+            calories={calculateMacro("calories", ingredients, portionMultiplier)}
+            proteins={calculateMacro("proteins", ingredients, portionMultiplier)}
+            fats={calculateMacro("fats", ingredients, portionMultiplier)}
+            carbohydrates={calculateMacro("carbohydrates", ingredients, portionMultiplier)}
             extra={{
-              saturatedFats: calculateMacro("saturatedFats", ingredients),
-              sugar: calculateMacro("sugar", ingredients),
-              fiber: calculateMacro("fiber", ingredients),
-              salt: calculateMacro("salt", ingredients),
+              saturatedFats: calculateMacro("saturatedFats", ingredients, portionMultiplier),
+              sugar: calculateMacro("sugar", ingredients, portionMultiplier),
+              fiber: calculateMacro("fiber", ingredients, portionMultiplier),
+              salt: calculateMacro("salt", ingredients, portionMultiplier),
             }}
           />
         </>
