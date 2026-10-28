@@ -2,18 +2,33 @@ import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, Button, Chip, Fab, IconButton, List, ListItem, ListItemText, MenuItem, Stack } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Chip,
+  Fab,
+  FormControlLabel,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  MenuItem,
+  Stack,
+} from "@mui/material";
 import ControlledNumberField from "@src/components/atoms/ControlledNumberField";
 import ControlledTextField from "@src/components/atoms/ControlledTextField";
 import DraggableListItem from "@src/components/molecules/DraggableListItem";
 import MacroTable from "@src/components/molecules/MacroTable/MacroTable.tsx";
 import ProductDialog from "@src/components/organisms/ProductDialog";
+import useDelete from "@src/repository/useDelete.ts";
+import useUpsertProduct from "@src/repository/useUpsertProduct.ts";
 import useUpsertRecipe from "@src/repository/useUpsertRecipe.ts";
 import { setRecipeToEdit } from "@src/store/GlobalSlice.ts";
 import { useAppDispatch, useAppSelector } from "@src/store/store.ts";
 import { IngredientMeasure, MEAL_TIME, PRODUCT_TYPE } from "@src/utils/constants.ts";
-import { Enums } from "@src/utils/database.types.ts";
-import { calculateMacro, formatCurrency } from "@src/utils/functions.ts";
+import { Enums, TablesUpdate } from "@src/utils/database.types.ts";
+import { calculateAmount, calculateMacro, formatCurrency, getTagFromProducts } from "@src/utils/functions.ts";
 import routes from "@src/utils/routes.ts";
 import { MappedProduct } from "@src/utils/types.ts";
 import { useState } from "react";
@@ -46,6 +61,7 @@ function RecipeForm() {
         ]),
   );
   const [ingredientDialogOpen, setIngredientDialogOpen] = useState(false);
+  const [saveAsProduct, setSaveAsProduct] = useState(!!recipeToEdit?.linkedProduct);
   const { control, handleSubmit, watch } = useForm<RecipeFormData>({
     defaultValues: recipeToEdit
       ? {
@@ -63,6 +79,8 @@ function RecipeForm() {
   });
   const portions = watch("portions");
   const { mutate: upsertRecipe } = useUpsertRecipe({ onSuccess: () => navigate(routes.recipesList) });
+  const { mutateAsync: upsertProduct } = useUpsertProduct();
+  const { mutateAsync: deleteProduct } = useDelete("products");
 
   const onDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over || over.id === active.id) return;
@@ -72,7 +90,36 @@ function RecipeForm() {
   };
 
   const onSubmit = async (data: RecipeFormData) => {
-    upsertRecipe([recipeToEdit ? { id: recipeToEdit.id, ...data } : data, ingredients]);
+    const recipeData: TablesUpdate<"recipes"> = { ...data };
+    if (saveAsProduct) {
+      const products = ingredients.map(([product]) => product);
+      const totalProductsPortion = ingredients.reduce(
+        (acc, curr) => acc + calculateAmount(curr[1], curr[0].portion, curr[2]),
+        0,
+      );
+      const response = await upsertProduct({
+        id: recipeToEdit?.linkedProduct ?? undefined,
+        name: data.name,
+        proteins: calculateMacro("proteins", ingredientsForMacro, totalProductsPortion / 100),
+        fats: calculateMacro("fats", ingredientsForMacro, totalProductsPortion / 100),
+        saturatedFats: calculateMacro("saturatedFats", ingredientsForMacro, totalProductsPortion / 100),
+        carbohydrates: calculateMacro("carbohydrates", ingredientsForMacro, totalProductsPortion / 100),
+        sugar: calculateMacro("sugar", ingredientsForMacro, totalProductsPortion / 100),
+        fiber: calculateMacro("fiber", ingredientsForMacro, totalProductsPortion / 100),
+        salt: calculateMacro("salt", ingredientsForMacro, totalProductsPortion / 100),
+        cost: calculateMacro("cost", ingredientsForMacro, totalProductsPortion / 100),
+        tag: getTagFromProducts(products),
+        type: PRODUCT_TYPE.recipe,
+        portion: totalProductsPortion / portions,
+      });
+      recipeData.linkedProduct = response.data.id;
+    } else if (recipeToEdit?.linkedProduct) {
+      await deleteProduct(recipeToEdit.linkedProduct);
+      recipeData.linkedProduct = null;
+    }
+    if (recipeToEdit) recipeData.id = recipeToEdit.id;
+
+    upsertRecipe([recipeData, ingredients]);
     dispatch(setRecipeToEdit(null));
   };
 
@@ -184,6 +231,12 @@ function RecipeForm() {
       </DndContext>
 
       <Box sx={{ flex: 1 }} />
+
+      <FormControlLabel
+        sx={{ alignSelf: "center" }}
+        label={t("RecipeForm:saveAsProduct")}
+        control={<Checkbox checked={saveAsProduct} onChange={(_, checked) => setSaveAsProduct(checked)} />}
+      />
 
       <Button type="submit" variant="contained" sx={{ alignSelf: "center" }}>
         {recipeToEdit ? t("Shared:edit") : t("Shared:create")}

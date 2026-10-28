@@ -6,6 +6,7 @@ export const PRODUCT_TYPE = {
   fruit: "fruit",
   dessert: "dessert",
   spice: "spice",
+  recipe: "recipe",
 } as const;
 
 export const MEAL_TIME = {

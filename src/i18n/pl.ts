@@ -46,6 +46,7 @@ const resource = {
     fruit: "Owoc",
     vegetable: "Warzywo",
     spice: "Przyprawa",
+    recipe: "Przepis",
     tag: "Tag",
     none: "Brak",
     vegan: "Weganskie",
@@ -79,6 +80,7 @@ const resource = {
     ingredientDialogTitle: "Dodaj składnik",
     ingredient: "Składnik",
     defaultIncluded: "Domyślnie w przepisie",
+    saveAsProduct: "Zapisz jako produkt",
   },
   MacroTable: {
     calories: "kcal: {{calories}}",

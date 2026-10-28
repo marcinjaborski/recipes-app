@@ -16,9 +16,6 @@ const queryKey = {
   recipes_products: {
     all: ["recipes_products"] as const,
   },
-  recipes_recipes: {
-    all: ["recipes_recipes"] as const,
-  },
 };
 
 export default queryKey;
